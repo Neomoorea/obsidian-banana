@@ -1,0 +1,10 @@
+{
+  "id": "banana",
+  "name": "Banana",
+  "version": "1.0.0",
+  "minAppVersion": "1.13.3",
+  "description": "Omnisearch on steroids, literally.",
+  "author": "Neomoorea",
+  "authorUrl": "https://github.com/Neomoorea",
+  "isDesktopOnly": false
+}

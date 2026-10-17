@@ -1,0 +1,290 @@
+.banana-modal {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+.banana-modal > .banana-query-header {
+  flex: 0 0 auto;
+}
+.banana-modal > .prompt-results {
+  /* Let the modal's height follow its contents, shrinking only when its
+     viewport/user-selected max-height is reached. */
+  flex: 0 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+.banana-modal > .prompt-instructions {
+  /* Keep every shortcut visible in both search modes; let results surrender space first. */
+  flex: 0 0 auto;
+  min-height: auto;
+  max-height: none;
+  overflow: visible;
+}
+
+.banana-result {
+  white-space: normal;
+  display: flex;
+  flex-direction: row;
+  /* justify-content: space-between; */
+  flex-wrap: nowrap;
+}
+
+.banana-result__title-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: 5px;
+  flex-wrap: wrap;
+}
+
+.banana-result__title {
+  white-space: pre-wrap;
+  align-items: center;
+  display: flex;
+  gap: 5px;
+}
+
+.banana-result__title > span {
+}
+
+.banana-result__folder-path {
+  font-size: 0.75rem;
+  align-items: center;
+  display: flex;
+  gap: 5px;
+  color: var(--text-muted);
+}
+
+.banana-result__extension {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.banana-result__counter {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.banana-result__body {
+  white-space: normal;
+  font-size: small;
+  word-wrap: normal;
+
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+
+  color: var(--text-muted);
+  margin-inline-start: 0.5em;
+}
+
+.banana-result__embed {
+  margin-left: 1em;
+}
+
+.banana-result__image-container {
+  flex-basis: 20%;
+  text-align: end;
+}
+
+.banana-highlight {
+}
+
+.banana-default-highlight {
+  text-decoration: underline;
+  text-decoration-color: var(--text-highlight-bg);
+  text-decoration-thickness: 3px;
+  text-underline-offset: -1px;
+  text-decoration-skip-ink: none;
+}
+
+.banana-input-container {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: 5px;
+}
+
+.banana-result__icon {
+  display: inline-block;
+  vertical-align: middle;
+  width: 16px;
+  height: 16px;
+  margin-right: 4px;
+}
+
+.banana-result__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.banana-result__icon--emoji {
+  font-size: 16px;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+@media only screen and (max-width: 600px) {
+  .banana-input-container {
+    flex-direction: column;
+  }
+
+  .banana-input-container__buttons {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    padding: 0 1em 0 1em;
+    gap: 1em;
+  }
+  .banana-input-container__buttons > button {
+    flex-grow: 1;
+  }
+}
+
+@media only screen and (min-width: 600px) {
+  .banana-input-container__buttons {
+    margin-inline-end: 1em;
+  }
+}
+
+.banana-input-field {
+  position: relative;
+  flex-grow: 1;
+}
+
+.banana-result-highlight .cm-content ::selection,
+.banana-result-highlight .cm-line::selection {
+  background-color: var(
+    --banana-highlight-color,
+    rgba(222, 183, 110, 1)
+  );
+  color: var(--banana-highlight-text-color, black);
+}
+
+.banana-result-highlight .cm-selectionLayer .cm-selectionBackground {
+  background-color: var(
+    --banana-highlight-color,
+    rgba(222, 183, 110, 1)
+  );
+}
+
+
+/* Query language diagnostics and match provenance */
+.banana-query-diagnostics {
+  margin: 0.5em 0;
+  padding: 0.5em 0.75em;
+  border-inline-start: 2px solid var(--text-muted);
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+}
+.banana-query-diagnostics--invalid {
+  border-inline-start-color: var(--background-modifier-border);
+  color: var(--text-muted);
+}
+.banana-query-diagnostics__title {
+  margin-bottom: 0.2em;
+  font-weight: 600;
+}
+.banana-query-diagnostics span {
+  color: var(--text-muted);
+}
+.banana-query-filter-status {
+  margin: 0.35em 0;
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+}
+.banana-match-provenance {
+  display: inline-block;
+  vertical-align: middle;
+  margin-inline-start: 0.45em;
+  padding: 0.05em 0.35em;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 0.35em;
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  font-weight: normal;
+  line-height: 1.4;
+}
+
+
+/* Query-fork interaction polish */
+.banana-query-header {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+.banana-query-header__input,
+.banana-query-header__input .banana-input-container {
+  width: 100%;
+  min-width: 0;
+}
+.banana-query-header__input .banana-input-container {
+  flex-direction: row;
+}
+.banana-query-header__input .banana-input-field {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.banana-input-field {
+  position: relative;
+  min-width: 0;
+}
+.banana-input-field--with-count .prompt-input {
+  padding-inline-end: 3.5em;
+}
+.banana-query-result-count {
+  position: absolute;
+  inset-inline-end: 0.9em;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-faint);
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  white-space: nowrap;
+  line-height: 1.4;
+  pointer-events: none;
+  z-index: 4;
+}
+.banana-input-field--with-completion .prompt-input.banana-input--ghosted {
+  color: transparent !important;
+  -webkit-text-fill-color: transparent;
+  caret-color: var(--text-normal);
+  background: transparent;
+  position: relative;
+  z-index: 2;
+}
+.banana-input-ghost {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  pointer-events: none;
+  white-space: pre;
+  z-index: 1;
+  color: var(--text-normal);
+}
+.banana-input-ghost__text {
+  display: block;
+  width: max-content;
+  min-width: 100%;
+  box-sizing: border-box;
+  white-space: pre;
+  color: var(--text-normal);
+  text-align: start;
+}
+.banana-input-ghost__suffix {
+  color: var(--text-faint);
+}
+.banana-query-footer {
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+.banana-query-footer:active {
+  cursor: grabbing;
+}

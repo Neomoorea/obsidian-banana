@@ -1,0 +1,121 @@
+import { App, Platform, Plugin } from 'obsidian'
+import { settings } from '.'
+import { K_DISABLE_BANANA, RecencyCutoff } from '../globals'
+
+export function htmlDescription(htmlContent: string): DocumentFragment {
+  const desc = new DocumentFragment()
+  const span = desc.appendChild(document.createElement('span'))
+
+  // Parse HTML string safely using DOMParser
+  const parser = new DOMParser()
+  const parsed = parser.parseFromString(`<div>${htmlContent}</div>`, 'text/html')
+
+  // Check for parse errors
+  if (parsed.body.querySelector('parsererror')) {
+    // Fallback to plain text if parsing fails
+    span.textContent = htmlContent
+    return desc
+  }
+
+  // Copy all child nodes from parsed content to span
+  const sourceDiv = parsed.body.firstElementChild as HTMLElement
+  if (sourceDiv) {
+    while (sourceDiv.firstChild) {
+      span.appendChild(sourceDiv.firstChild)
+    }
+  }
+
+  return desc
+}
+
+export const needsARestart = `<strong style="color: var(--text-accent)">Needs a restart to fully take effect.</strong>`
+
+export interface WeightingSettings {
+  weightBasename: number
+  weightDirectory: number
+  weightH1: number
+  weightH2: number
+  weightH3: number
+  weightUnmarkedTags: number
+}
+export function isPluginDisabled(app: App): boolean {
+  return app.loadLocalStorage(K_DISABLE_BANANA) === '1'
+}
+
+export async function saveSettings(plugin: Plugin): Promise<void> {
+  await plugin.saveData(settings)
+}
+
+export function isCacheEnabled(): boolean {
+  return !Platform.isIosApp && settings.useCache
+}
+export interface BananaSettings extends WeightingSettings {
+  weightCustomProperties: { name: string; weight: number }[]
+  /** Enables caching to speed up indexing */
+  useCache: boolean
+  /** Respect the "excluded files" Obsidian setting by downranking results ignored files */
+  hideExcluded: boolean
+  /** Boost more recent files */
+  recencyBoost: RecencyCutoff
+  /** downrank files in the given folders */
+  downrankedFoldersFilters: string[]
+  /** Ignore diacritics when indexing files */
+  ignoreDiacritics: boolean
+  ignoreArabicDiacritics: boolean
+
+  /** Extensions of plain text files to index, in addition to .md */
+  indexedFileTypes: string[]
+  /** Index files without extension */
+  indexFilesWithoutExtension: boolean
+  /** Custom title field */
+  displayTitle: string
+  /** Enable PDF indexing */
+  PDFIndexing: boolean
+  /** Enable Images indexing */
+  imagesIndexing: boolean
+  /** Enable Office documents indexing */
+  officeIndexing: boolean
+  /** Enable image ai indexing */
+  aiImageIndexing: boolean
+
+  /** Enable indexing of unknown files */
+  unsupportedFilesIndexing: 'yes' | 'no' | 'default'
+  /** Activate the small 🔍 button on Obsidian's ribbon */
+  ribbonIcon: boolean
+  /** Display the small contextual excerpt in search results */
+  showExcerpt: boolean
+  /** Number of embeds references to display in search results */
+  maxEmbeds: number
+  /** Render line returns with <br> in excerpts */
+  renderLineReturnInExcerpts: boolean
+  /** Enable a "create note" button in the Vault Search modal */
+  showCreateButton: boolean
+  /** Re-execute the last query when opening Banana */
+  showPreviousQueryResults: boolean
+  /** Internal one-time migration marker for opt-in previous-query restoration. */
+  queryPrefillBehaviorVersion: number
+  /** Key for the welcome message when Obsidian is updated. A message is only shown once. */
+  welcomeMessage: string
+  /** If a query returns 0 result, try again with more relax conditions */
+  simpleSearch: boolean
+  /** Parser-level user aliases from short field names to built-in query fields. */
+  queryFieldAliases: Record<string, string>
+  /** Saved viewport-relative position of the resizable query modal. */
+  queryModalPosition: { left: number; top: number } | null
+  /** Saved modal width and optional user-selected vertical height cap, in CSS pixels. */
+  queryModalSize: { width: number; height: number | null } | null
+  /** Internal migration marker for the content-driven modal-sizing behavior. */
+  queryModalGeometryVersion: number
+  tokenizeUrls: boolean
+  highlight: boolean
+  splitCamelCase: boolean
+  verboseLogging: boolean
+  vimLikeNavigationShortcut: boolean
+  fuzziness: '0' | '1' | '2'
+  httpApiEnabled: boolean
+  httpApiPort: string
+  httpApiNotice: boolean
+
+  DANGER_httpHost: string | null
+  DANGER_forceSaveCache: boolean
+}

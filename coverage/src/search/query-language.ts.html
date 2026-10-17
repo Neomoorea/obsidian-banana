@@ -1,0 +1,3511 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Code coverage report for src/search/query-language.ts</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../../favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+    
+<body>
+<div class='wrapper'>
+    <div class='pad1'>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">src/search</a> query-language.ts</h1>
+        <div class='clearfix'>
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">85.25% </span>
+                <span class="quiet">Statements</span>
+                <span class='fraction'>561/658</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">81.9% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>525/641</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">98.5% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>66/67</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">88.88% </span>
+                <span class="quiet">Lines</span>
+                <span class='fraction'>480/540</span>
+            </div>
+        
+            
+        </div>
+        <p class="quiet">
+            Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
+        </p>
+        <template id="filterTemplate">
+            <div class="quiet">
+                Filter:
+                <input type="search" id="fileSearch">
+            </div>
+        </template>
+    </div>
+    <div class='status-line high'></div>
+    <pre><table class="coverage">
+<tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
+<a name='L2'></a><a href='#L2'>2</a>
+<a name='L3'></a><a href='#L3'>3</a>
+<a name='L4'></a><a href='#L4'>4</a>
+<a name='L5'></a><a href='#L5'>5</a>
+<a name='L6'></a><a href='#L6'>6</a>
+<a name='L7'></a><a href='#L7'>7</a>
+<a name='L8'></a><a href='#L8'>8</a>
+<a name='L9'></a><a href='#L9'>9</a>
+<a name='L10'></a><a href='#L10'>10</a>
+<a name='L11'></a><a href='#L11'>11</a>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a>
+<a name='L99'></a><a href='#L99'>99</a>
+<a name='L100'></a><a href='#L100'>100</a>
+<a name='L101'></a><a href='#L101'>101</a>
+<a name='L102'></a><a href='#L102'>102</a>
+<a name='L103'></a><a href='#L103'>103</a>
+<a name='L104'></a><a href='#L104'>104</a>
+<a name='L105'></a><a href='#L105'>105</a>
+<a name='L106'></a><a href='#L106'>106</a>
+<a name='L107'></a><a href='#L107'>107</a>
+<a name='L108'></a><a href='#L108'>108</a>
+<a name='L109'></a><a href='#L109'>109</a>
+<a name='L110'></a><a href='#L110'>110</a>
+<a name='L111'></a><a href='#L111'>111</a>
+<a name='L112'></a><a href='#L112'>112</a>
+<a name='L113'></a><a href='#L113'>113</a>
+<a name='L114'></a><a href='#L114'>114</a>
+<a name='L115'></a><a href='#L115'>115</a>
+<a name='L116'></a><a href='#L116'>116</a>
+<a name='L117'></a><a href='#L117'>117</a>
+<a name='L118'></a><a href='#L118'>118</a>
+<a name='L119'></a><a href='#L119'>119</a>
+<a name='L120'></a><a href='#L120'>120</a>
+<a name='L121'></a><a href='#L121'>121</a>
+<a name='L122'></a><a href='#L122'>122</a>
+<a name='L123'></a><a href='#L123'>123</a>
+<a name='L124'></a><a href='#L124'>124</a>
+<a name='L125'></a><a href='#L125'>125</a>
+<a name='L126'></a><a href='#L126'>126</a>
+<a name='L127'></a><a href='#L127'>127</a>
+<a name='L128'></a><a href='#L128'>128</a>
+<a name='L129'></a><a href='#L129'>129</a>
+<a name='L130'></a><a href='#L130'>130</a>
+<a name='L131'></a><a href='#L131'>131</a>
+<a name='L132'></a><a href='#L132'>132</a>
+<a name='L133'></a><a href='#L133'>133</a>
+<a name='L134'></a><a href='#L134'>134</a>
+<a name='L135'></a><a href='#L135'>135</a>
+<a name='L136'></a><a href='#L136'>136</a>
+<a name='L137'></a><a href='#L137'>137</a>
+<a name='L138'></a><a href='#L138'>138</a>
+<a name='L139'></a><a href='#L139'>139</a>
+<a name='L140'></a><a href='#L140'>140</a>
+<a name='L141'></a><a href='#L141'>141</a>
+<a name='L142'></a><a href='#L142'>142</a>
+<a name='L143'></a><a href='#L143'>143</a>
+<a name='L144'></a><a href='#L144'>144</a>
+<a name='L145'></a><a href='#L145'>145</a>
+<a name='L146'></a><a href='#L146'>146</a>
+<a name='L147'></a><a href='#L147'>147</a>
+<a name='L148'></a><a href='#L148'>148</a>
+<a name='L149'></a><a href='#L149'>149</a>
+<a name='L150'></a><a href='#L150'>150</a>
+<a name='L151'></a><a href='#L151'>151</a>
+<a name='L152'></a><a href='#L152'>152</a>
+<a name='L153'></a><a href='#L153'>153</a>
+<a name='L154'></a><a href='#L154'>154</a>
+<a name='L155'></a><a href='#L155'>155</a>
+<a name='L156'></a><a href='#L156'>156</a>
+<a name='L157'></a><a href='#L157'>157</a>
+<a name='L158'></a><a href='#L158'>158</a>
+<a name='L159'></a><a href='#L159'>159</a>
+<a name='L160'></a><a href='#L160'>160</a>
+<a name='L161'></a><a href='#L161'>161</a>
+<a name='L162'></a><a href='#L162'>162</a>
+<a name='L163'></a><a href='#L163'>163</a>
+<a name='L164'></a><a href='#L164'>164</a>
+<a name='L165'></a><a href='#L165'>165</a>
+<a name='L166'></a><a href='#L166'>166</a>
+<a name='L167'></a><a href='#L167'>167</a>
+<a name='L168'></a><a href='#L168'>168</a>
+<a name='L169'></a><a href='#L169'>169</a>
+<a name='L170'></a><a href='#L170'>170</a>
+<a name='L171'></a><a href='#L171'>171</a>
+<a name='L172'></a><a href='#L172'>172</a>
+<a name='L173'></a><a href='#L173'>173</a>
+<a name='L174'></a><a href='#L174'>174</a>
+<a name='L175'></a><a href='#L175'>175</a>
+<a name='L176'></a><a href='#L176'>176</a>
+<a name='L177'></a><a href='#L177'>177</a>
+<a name='L178'></a><a href='#L178'>178</a>
+<a name='L179'></a><a href='#L179'>179</a>
+<a name='L180'></a><a href='#L180'>180</a>
+<a name='L181'></a><a href='#L181'>181</a>
+<a name='L182'></a><a href='#L182'>182</a>
+<a name='L183'></a><a href='#L183'>183</a>
+<a name='L184'></a><a href='#L184'>184</a>
+<a name='L185'></a><a href='#L185'>185</a>
+<a name='L186'></a><a href='#L186'>186</a>
+<a name='L187'></a><a href='#L187'>187</a>
+<a name='L188'></a><a href='#L188'>188</a>
+<a name='L189'></a><a href='#L189'>189</a>
+<a name='L190'></a><a href='#L190'>190</a>
+<a name='L191'></a><a href='#L191'>191</a>
+<a name='L192'></a><a href='#L192'>192</a>
+<a name='L193'></a><a href='#L193'>193</a>
+<a name='L194'></a><a href='#L194'>194</a>
+<a name='L195'></a><a href='#L195'>195</a>
+<a name='L196'></a><a href='#L196'>196</a>
+<a name='L197'></a><a href='#L197'>197</a>
+<a name='L198'></a><a href='#L198'>198</a>
+<a name='L199'></a><a href='#L199'>199</a>
+<a name='L200'></a><a href='#L200'>200</a>
+<a name='L201'></a><a href='#L201'>201</a>
+<a name='L202'></a><a href='#L202'>202</a>
+<a name='L203'></a><a href='#L203'>203</a>
+<a name='L204'></a><a href='#L204'>204</a>
+<a name='L205'></a><a href='#L205'>205</a>
+<a name='L206'></a><a href='#L206'>206</a>
+<a name='L207'></a><a href='#L207'>207</a>
+<a name='L208'></a><a href='#L208'>208</a>
+<a name='L209'></a><a href='#L209'>209</a>
+<a name='L210'></a><a href='#L210'>210</a>
+<a name='L211'></a><a href='#L211'>211</a>
+<a name='L212'></a><a href='#L212'>212</a>
+<a name='L213'></a><a href='#L213'>213</a>
+<a name='L214'></a><a href='#L214'>214</a>
+<a name='L215'></a><a href='#L215'>215</a>
+<a name='L216'></a><a href='#L216'>216</a>
+<a name='L217'></a><a href='#L217'>217</a>
+<a name='L218'></a><a href='#L218'>218</a>
+<a name='L219'></a><a href='#L219'>219</a>
+<a name='L220'></a><a href='#L220'>220</a>
+<a name='L221'></a><a href='#L221'>221</a>
+<a name='L222'></a><a href='#L222'>222</a>
+<a name='L223'></a><a href='#L223'>223</a>
+<a name='L224'></a><a href='#L224'>224</a>
+<a name='L225'></a><a href='#L225'>225</a>
+<a name='L226'></a><a href='#L226'>226</a>
+<a name='L227'></a><a href='#L227'>227</a>
+<a name='L228'></a><a href='#L228'>228</a>
+<a name='L229'></a><a href='#L229'>229</a>
+<a name='L230'></a><a href='#L230'>230</a>
+<a name='L231'></a><a href='#L231'>231</a>
+<a name='L232'></a><a href='#L232'>232</a>
+<a name='L233'></a><a href='#L233'>233</a>
+<a name='L234'></a><a href='#L234'>234</a>
+<a name='L235'></a><a href='#L235'>235</a>
+<a name='L236'></a><a href='#L236'>236</a>
+<a name='L237'></a><a href='#L237'>237</a>
+<a name='L238'></a><a href='#L238'>238</a>
+<a name='L239'></a><a href='#L239'>239</a>
+<a name='L240'></a><a href='#L240'>240</a>
+<a name='L241'></a><a href='#L241'>241</a>
+<a name='L242'></a><a href='#L242'>242</a>
+<a name='L243'></a><a href='#L243'>243</a>
+<a name='L244'></a><a href='#L244'>244</a>
+<a name='L245'></a><a href='#L245'>245</a>
+<a name='L246'></a><a href='#L246'>246</a>
+<a name='L247'></a><a href='#L247'>247</a>
+<a name='L248'></a><a href='#L248'>248</a>
+<a name='L249'></a><a href='#L249'>249</a>
+<a name='L250'></a><a href='#L250'>250</a>
+<a name='L251'></a><a href='#L251'>251</a>
+<a name='L252'></a><a href='#L252'>252</a>
+<a name='L253'></a><a href='#L253'>253</a>
+<a name='L254'></a><a href='#L254'>254</a>
+<a name='L255'></a><a href='#L255'>255</a>
+<a name='L256'></a><a href='#L256'>256</a>
+<a name='L257'></a><a href='#L257'>257</a>
+<a name='L258'></a><a href='#L258'>258</a>
+<a name='L259'></a><a href='#L259'>259</a>
+<a name='L260'></a><a href='#L260'>260</a>
+<a name='L261'></a><a href='#L261'>261</a>
+<a name='L262'></a><a href='#L262'>262</a>
+<a name='L263'></a><a href='#L263'>263</a>
+<a name='L264'></a><a href='#L264'>264</a>
+<a name='L265'></a><a href='#L265'>265</a>
+<a name='L266'></a><a href='#L266'>266</a>
+<a name='L267'></a><a href='#L267'>267</a>
+<a name='L268'></a><a href='#L268'>268</a>
+<a name='L269'></a><a href='#L269'>269</a>
+<a name='L270'></a><a href='#L270'>270</a>
+<a name='L271'></a><a href='#L271'>271</a>
+<a name='L272'></a><a href='#L272'>272</a>
+<a name='L273'></a><a href='#L273'>273</a>
+<a name='L274'></a><a href='#L274'>274</a>
+<a name='L275'></a><a href='#L275'>275</a>
+<a name='L276'></a><a href='#L276'>276</a>
+<a name='L277'></a><a href='#L277'>277</a>
+<a name='L278'></a><a href='#L278'>278</a>
+<a name='L279'></a><a href='#L279'>279</a>
+<a name='L280'></a><a href='#L280'>280</a>
+<a name='L281'></a><a href='#L281'>281</a>
+<a name='L282'></a><a href='#L282'>282</a>
+<a name='L283'></a><a href='#L283'>283</a>
+<a name='L284'></a><a href='#L284'>284</a>
+<a name='L285'></a><a href='#L285'>285</a>
+<a name='L286'></a><a href='#L286'>286</a>
+<a name='L287'></a><a href='#L287'>287</a>
+<a name='L288'></a><a href='#L288'>288</a>
+<a name='L289'></a><a href='#L289'>289</a>
+<a name='L290'></a><a href='#L290'>290</a>
+<a name='L291'></a><a href='#L291'>291</a>
+<a name='L292'></a><a href='#L292'>292</a>
+<a name='L293'></a><a href='#L293'>293</a>
+<a name='L294'></a><a href='#L294'>294</a>
+<a name='L295'></a><a href='#L295'>295</a>
+<a name='L296'></a><a href='#L296'>296</a>
+<a name='L297'></a><a href='#L297'>297</a>
+<a name='L298'></a><a href='#L298'>298</a>
+<a name='L299'></a><a href='#L299'>299</a>
+<a name='L300'></a><a href='#L300'>300</a>
+<a name='L301'></a><a href='#L301'>301</a>
+<a name='L302'></a><a href='#L302'>302</a>
+<a name='L303'></a><a href='#L303'>303</a>
+<a name='L304'></a><a href='#L304'>304</a>
+<a name='L305'></a><a href='#L305'>305</a>
+<a name='L306'></a><a href='#L306'>306</a>
+<a name='L307'></a><a href='#L307'>307</a>
+<a name='L308'></a><a href='#L308'>308</a>
+<a name='L309'></a><a href='#L309'>309</a>
+<a name='L310'></a><a href='#L310'>310</a>
+<a name='L311'></a><a href='#L311'>311</a>
+<a name='L312'></a><a href='#L312'>312</a>
+<a name='L313'></a><a href='#L313'>313</a>
+<a name='L314'></a><a href='#L314'>314</a>
+<a name='L315'></a><a href='#L315'>315</a>
+<a name='L316'></a><a href='#L316'>316</a>
+<a name='L317'></a><a href='#L317'>317</a>
+<a name='L318'></a><a href='#L318'>318</a>
+<a name='L319'></a><a href='#L319'>319</a>
+<a name='L320'></a><a href='#L320'>320</a>
+<a name='L321'></a><a href='#L321'>321</a>
+<a name='L322'></a><a href='#L322'>322</a>
+<a name='L323'></a><a href='#L323'>323</a>
+<a name='L324'></a><a href='#L324'>324</a>
+<a name='L325'></a><a href='#L325'>325</a>
+<a name='L326'></a><a href='#L326'>326</a>
+<a name='L327'></a><a href='#L327'>327</a>
+<a name='L328'></a><a href='#L328'>328</a>
+<a name='L329'></a><a href='#L329'>329</a>
+<a name='L330'></a><a href='#L330'>330</a>
+<a name='L331'></a><a href='#L331'>331</a>
+<a name='L332'></a><a href='#L332'>332</a>
+<a name='L333'></a><a href='#L333'>333</a>
+<a name='L334'></a><a href='#L334'>334</a>
+<a name='L335'></a><a href='#L335'>335</a>
+<a name='L336'></a><a href='#L336'>336</a>
+<a name='L337'></a><a href='#L337'>337</a>
+<a name='L338'></a><a href='#L338'>338</a>
+<a name='L339'></a><a href='#L339'>339</a>
+<a name='L340'></a><a href='#L340'>340</a>
+<a name='L341'></a><a href='#L341'>341</a>
+<a name='L342'></a><a href='#L342'>342</a>
+<a name='L343'></a><a href='#L343'>343</a>
+<a name='L344'></a><a href='#L344'>344</a>
+<a name='L345'></a><a href='#L345'>345</a>
+<a name='L346'></a><a href='#L346'>346</a>
+<a name='L347'></a><a href='#L347'>347</a>
+<a name='L348'></a><a href='#L348'>348</a>
+<a name='L349'></a><a href='#L349'>349</a>
+<a name='L350'></a><a href='#L350'>350</a>
+<a name='L351'></a><a href='#L351'>351</a>
+<a name='L352'></a><a href='#L352'>352</a>
+<a name='L353'></a><a href='#L353'>353</a>
+<a name='L354'></a><a href='#L354'>354</a>
+<a name='L355'></a><a href='#L355'>355</a>
+<a name='L356'></a><a href='#L356'>356</a>
+<a name='L357'></a><a href='#L357'>357</a>
+<a name='L358'></a><a href='#L358'>358</a>
+<a name='L359'></a><a href='#L359'>359</a>
+<a name='L360'></a><a href='#L360'>360</a>
+<a name='L361'></a><a href='#L361'>361</a>
+<a name='L362'></a><a href='#L362'>362</a>
+<a name='L363'></a><a href='#L363'>363</a>
+<a name='L364'></a><a href='#L364'>364</a>
+<a name='L365'></a><a href='#L365'>365</a>
+<a name='L366'></a><a href='#L366'>366</a>
+<a name='L367'></a><a href='#L367'>367</a>
+<a name='L368'></a><a href='#L368'>368</a>
+<a name='L369'></a><a href='#L369'>369</a>
+<a name='L370'></a><a href='#L370'>370</a>
+<a name='L371'></a><a href='#L371'>371</a>
+<a name='L372'></a><a href='#L372'>372</a>
+<a name='L373'></a><a href='#L373'>373</a>
+<a name='L374'></a><a href='#L374'>374</a>
+<a name='L375'></a><a href='#L375'>375</a>
+<a name='L376'></a><a href='#L376'>376</a>
+<a name='L377'></a><a href='#L377'>377</a>
+<a name='L378'></a><a href='#L378'>378</a>
+<a name='L379'></a><a href='#L379'>379</a>
+<a name='L380'></a><a href='#L380'>380</a>
+<a name='L381'></a><a href='#L381'>381</a>
+<a name='L382'></a><a href='#L382'>382</a>
+<a name='L383'></a><a href='#L383'>383</a>
+<a name='L384'></a><a href='#L384'>384</a>
+<a name='L385'></a><a href='#L385'>385</a>
+<a name='L386'></a><a href='#L386'>386</a>
+<a name='L387'></a><a href='#L387'>387</a>
+<a name='L388'></a><a href='#L388'>388</a>
+<a name='L389'></a><a href='#L389'>389</a>
+<a name='L390'></a><a href='#L390'>390</a>
+<a name='L391'></a><a href='#L391'>391</a>
+<a name='L392'></a><a href='#L392'>392</a>
+<a name='L393'></a><a href='#L393'>393</a>
+<a name='L394'></a><a href='#L394'>394</a>
+<a name='L395'></a><a href='#L395'>395</a>
+<a name='L396'></a><a href='#L396'>396</a>
+<a name='L397'></a><a href='#L397'>397</a>
+<a name='L398'></a><a href='#L398'>398</a>
+<a name='L399'></a><a href='#L399'>399</a>
+<a name='L400'></a><a href='#L400'>400</a>
+<a name='L401'></a><a href='#L401'>401</a>
+<a name='L402'></a><a href='#L402'>402</a>
+<a name='L403'></a><a href='#L403'>403</a>
+<a name='L404'></a><a href='#L404'>404</a>
+<a name='L405'></a><a href='#L405'>405</a>
+<a name='L406'></a><a href='#L406'>406</a>
+<a name='L407'></a><a href='#L407'>407</a>
+<a name='L408'></a><a href='#L408'>408</a>
+<a name='L409'></a><a href='#L409'>409</a>
+<a name='L410'></a><a href='#L410'>410</a>
+<a name='L411'></a><a href='#L411'>411</a>
+<a name='L412'></a><a href='#L412'>412</a>
+<a name='L413'></a><a href='#L413'>413</a>
+<a name='L414'></a><a href='#L414'>414</a>
+<a name='L415'></a><a href='#L415'>415</a>
+<a name='L416'></a><a href='#L416'>416</a>
+<a name='L417'></a><a href='#L417'>417</a>
+<a name='L418'></a><a href='#L418'>418</a>
+<a name='L419'></a><a href='#L419'>419</a>
+<a name='L420'></a><a href='#L420'>420</a>
+<a name='L421'></a><a href='#L421'>421</a>
+<a name='L422'></a><a href='#L422'>422</a>
+<a name='L423'></a><a href='#L423'>423</a>
+<a name='L424'></a><a href='#L424'>424</a>
+<a name='L425'></a><a href='#L425'>425</a>
+<a name='L426'></a><a href='#L426'>426</a>
+<a name='L427'></a><a href='#L427'>427</a>
+<a name='L428'></a><a href='#L428'>428</a>
+<a name='L429'></a><a href='#L429'>429</a>
+<a name='L430'></a><a href='#L430'>430</a>
+<a name='L431'></a><a href='#L431'>431</a>
+<a name='L432'></a><a href='#L432'>432</a>
+<a name='L433'></a><a href='#L433'>433</a>
+<a name='L434'></a><a href='#L434'>434</a>
+<a name='L435'></a><a href='#L435'>435</a>
+<a name='L436'></a><a href='#L436'>436</a>
+<a name='L437'></a><a href='#L437'>437</a>
+<a name='L438'></a><a href='#L438'>438</a>
+<a name='L439'></a><a href='#L439'>439</a>
+<a name='L440'></a><a href='#L440'>440</a>
+<a name='L441'></a><a href='#L441'>441</a>
+<a name='L442'></a><a href='#L442'>442</a>
+<a name='L443'></a><a href='#L443'>443</a>
+<a name='L444'></a><a href='#L444'>444</a>
+<a name='L445'></a><a href='#L445'>445</a>
+<a name='L446'></a><a href='#L446'>446</a>
+<a name='L447'></a><a href='#L447'>447</a>
+<a name='L448'></a><a href='#L448'>448</a>
+<a name='L449'></a><a href='#L449'>449</a>
+<a name='L450'></a><a href='#L450'>450</a>
+<a name='L451'></a><a href='#L451'>451</a>
+<a name='L452'></a><a href='#L452'>452</a>
+<a name='L453'></a><a href='#L453'>453</a>
+<a name='L454'></a><a href='#L454'>454</a>
+<a name='L455'></a><a href='#L455'>455</a>
+<a name='L456'></a><a href='#L456'>456</a>
+<a name='L457'></a><a href='#L457'>457</a>
+<a name='L458'></a><a href='#L458'>458</a>
+<a name='L459'></a><a href='#L459'>459</a>
+<a name='L460'></a><a href='#L460'>460</a>
+<a name='L461'></a><a href='#L461'>461</a>
+<a name='L462'></a><a href='#L462'>462</a>
+<a name='L463'></a><a href='#L463'>463</a>
+<a name='L464'></a><a href='#L464'>464</a>
+<a name='L465'></a><a href='#L465'>465</a>
+<a name='L466'></a><a href='#L466'>466</a>
+<a name='L467'></a><a href='#L467'>467</a>
+<a name='L468'></a><a href='#L468'>468</a>
+<a name='L469'></a><a href='#L469'>469</a>
+<a name='L470'></a><a href='#L470'>470</a>
+<a name='L471'></a><a href='#L471'>471</a>
+<a name='L472'></a><a href='#L472'>472</a>
+<a name='L473'></a><a href='#L473'>473</a>
+<a name='L474'></a><a href='#L474'>474</a>
+<a name='L475'></a><a href='#L475'>475</a>
+<a name='L476'></a><a href='#L476'>476</a>
+<a name='L477'></a><a href='#L477'>477</a>
+<a name='L478'></a><a href='#L478'>478</a>
+<a name='L479'></a><a href='#L479'>479</a>
+<a name='L480'></a><a href='#L480'>480</a>
+<a name='L481'></a><a href='#L481'>481</a>
+<a name='L482'></a><a href='#L482'>482</a>
+<a name='L483'></a><a href='#L483'>483</a>
+<a name='L484'></a><a href='#L484'>484</a>
+<a name='L485'></a><a href='#L485'>485</a>
+<a name='L486'></a><a href='#L486'>486</a>
+<a name='L487'></a><a href='#L487'>487</a>
+<a name='L488'></a><a href='#L488'>488</a>
+<a name='L489'></a><a href='#L489'>489</a>
+<a name='L490'></a><a href='#L490'>490</a>
+<a name='L491'></a><a href='#L491'>491</a>
+<a name='L492'></a><a href='#L492'>492</a>
+<a name='L493'></a><a href='#L493'>493</a>
+<a name='L494'></a><a href='#L494'>494</a>
+<a name='L495'></a><a href='#L495'>495</a>
+<a name='L496'></a><a href='#L496'>496</a>
+<a name='L497'></a><a href='#L497'>497</a>
+<a name='L498'></a><a href='#L498'>498</a>
+<a name='L499'></a><a href='#L499'>499</a>
+<a name='L500'></a><a href='#L500'>500</a>
+<a name='L501'></a><a href='#L501'>501</a>
+<a name='L502'></a><a href='#L502'>502</a>
+<a name='L503'></a><a href='#L503'>503</a>
+<a name='L504'></a><a href='#L504'>504</a>
+<a name='L505'></a><a href='#L505'>505</a>
+<a name='L506'></a><a href='#L506'>506</a>
+<a name='L507'></a><a href='#L507'>507</a>
+<a name='L508'></a><a href='#L508'>508</a>
+<a name='L509'></a><a href='#L509'>509</a>
+<a name='L510'></a><a href='#L510'>510</a>
+<a name='L511'></a><a href='#L511'>511</a>
+<a name='L512'></a><a href='#L512'>512</a>
+<a name='L513'></a><a href='#L513'>513</a>
+<a name='L514'></a><a href='#L514'>514</a>
+<a name='L515'></a><a href='#L515'>515</a>
+<a name='L516'></a><a href='#L516'>516</a>
+<a name='L517'></a><a href='#L517'>517</a>
+<a name='L518'></a><a href='#L518'>518</a>
+<a name='L519'></a><a href='#L519'>519</a>
+<a name='L520'></a><a href='#L520'>520</a>
+<a name='L521'></a><a href='#L521'>521</a>
+<a name='L522'></a><a href='#L522'>522</a>
+<a name='L523'></a><a href='#L523'>523</a>
+<a name='L524'></a><a href='#L524'>524</a>
+<a name='L525'></a><a href='#L525'>525</a>
+<a name='L526'></a><a href='#L526'>526</a>
+<a name='L527'></a><a href='#L527'>527</a>
+<a name='L528'></a><a href='#L528'>528</a>
+<a name='L529'></a><a href='#L529'>529</a>
+<a name='L530'></a><a href='#L530'>530</a>
+<a name='L531'></a><a href='#L531'>531</a>
+<a name='L532'></a><a href='#L532'>532</a>
+<a name='L533'></a><a href='#L533'>533</a>
+<a name='L534'></a><a href='#L534'>534</a>
+<a name='L535'></a><a href='#L535'>535</a>
+<a name='L536'></a><a href='#L536'>536</a>
+<a name='L537'></a><a href='#L537'>537</a>
+<a name='L538'></a><a href='#L538'>538</a>
+<a name='L539'></a><a href='#L539'>539</a>
+<a name='L540'></a><a href='#L540'>540</a>
+<a name='L541'></a><a href='#L541'>541</a>
+<a name='L542'></a><a href='#L542'>542</a>
+<a name='L543'></a><a href='#L543'>543</a>
+<a name='L544'></a><a href='#L544'>544</a>
+<a name='L545'></a><a href='#L545'>545</a>
+<a name='L546'></a><a href='#L546'>546</a>
+<a name='L547'></a><a href='#L547'>547</a>
+<a name='L548'></a><a href='#L548'>548</a>
+<a name='L549'></a><a href='#L549'>549</a>
+<a name='L550'></a><a href='#L550'>550</a>
+<a name='L551'></a><a href='#L551'>551</a>
+<a name='L552'></a><a href='#L552'>552</a>
+<a name='L553'></a><a href='#L553'>553</a>
+<a name='L554'></a><a href='#L554'>554</a>
+<a name='L555'></a><a href='#L555'>555</a>
+<a name='L556'></a><a href='#L556'>556</a>
+<a name='L557'></a><a href='#L557'>557</a>
+<a name='L558'></a><a href='#L558'>558</a>
+<a name='L559'></a><a href='#L559'>559</a>
+<a name='L560'></a><a href='#L560'>560</a>
+<a name='L561'></a><a href='#L561'>561</a>
+<a name='L562'></a><a href='#L562'>562</a>
+<a name='L563'></a><a href='#L563'>563</a>
+<a name='L564'></a><a href='#L564'>564</a>
+<a name='L565'></a><a href='#L565'>565</a>
+<a name='L566'></a><a href='#L566'>566</a>
+<a name='L567'></a><a href='#L567'>567</a>
+<a name='L568'></a><a href='#L568'>568</a>
+<a name='L569'></a><a href='#L569'>569</a>
+<a name='L570'></a><a href='#L570'>570</a>
+<a name='L571'></a><a href='#L571'>571</a>
+<a name='L572'></a><a href='#L572'>572</a>
+<a name='L573'></a><a href='#L573'>573</a>
+<a name='L574'></a><a href='#L574'>574</a>
+<a name='L575'></a><a href='#L575'>575</a>
+<a name='L576'></a><a href='#L576'>576</a>
+<a name='L577'></a><a href='#L577'>577</a>
+<a name='L578'></a><a href='#L578'>578</a>
+<a name='L579'></a><a href='#L579'>579</a>
+<a name='L580'></a><a href='#L580'>580</a>
+<a name='L581'></a><a href='#L581'>581</a>
+<a name='L582'></a><a href='#L582'>582</a>
+<a name='L583'></a><a href='#L583'>583</a>
+<a name='L584'></a><a href='#L584'>584</a>
+<a name='L585'></a><a href='#L585'>585</a>
+<a name='L586'></a><a href='#L586'>586</a>
+<a name='L587'></a><a href='#L587'>587</a>
+<a name='L588'></a><a href='#L588'>588</a>
+<a name='L589'></a><a href='#L589'>589</a>
+<a name='L590'></a><a href='#L590'>590</a>
+<a name='L591'></a><a href='#L591'>591</a>
+<a name='L592'></a><a href='#L592'>592</a>
+<a name='L593'></a><a href='#L593'>593</a>
+<a name='L594'></a><a href='#L594'>594</a>
+<a name='L595'></a><a href='#L595'>595</a>
+<a name='L596'></a><a href='#L596'>596</a>
+<a name='L597'></a><a href='#L597'>597</a>
+<a name='L598'></a><a href='#L598'>598</a>
+<a name='L599'></a><a href='#L599'>599</a>
+<a name='L600'></a><a href='#L600'>600</a>
+<a name='L601'></a><a href='#L601'>601</a>
+<a name='L602'></a><a href='#L602'>602</a>
+<a name='L603'></a><a href='#L603'>603</a>
+<a name='L604'></a><a href='#L604'>604</a>
+<a name='L605'></a><a href='#L605'>605</a>
+<a name='L606'></a><a href='#L606'>606</a>
+<a name='L607'></a><a href='#L607'>607</a>
+<a name='L608'></a><a href='#L608'>608</a>
+<a name='L609'></a><a href='#L609'>609</a>
+<a name='L610'></a><a href='#L610'>610</a>
+<a name='L611'></a><a href='#L611'>611</a>
+<a name='L612'></a><a href='#L612'>612</a>
+<a name='L613'></a><a href='#L613'>613</a>
+<a name='L614'></a><a href='#L614'>614</a>
+<a name='L615'></a><a href='#L615'>615</a>
+<a name='L616'></a><a href='#L616'>616</a>
+<a name='L617'></a><a href='#L617'>617</a>
+<a name='L618'></a><a href='#L618'>618</a>
+<a name='L619'></a><a href='#L619'>619</a>
+<a name='L620'></a><a href='#L620'>620</a>
+<a name='L621'></a><a href='#L621'>621</a>
+<a name='L622'></a><a href='#L622'>622</a>
+<a name='L623'></a><a href='#L623'>623</a>
+<a name='L624'></a><a href='#L624'>624</a>
+<a name='L625'></a><a href='#L625'>625</a>
+<a name='L626'></a><a href='#L626'>626</a>
+<a name='L627'></a><a href='#L627'>627</a>
+<a name='L628'></a><a href='#L628'>628</a>
+<a name='L629'></a><a href='#L629'>629</a>
+<a name='L630'></a><a href='#L630'>630</a>
+<a name='L631'></a><a href='#L631'>631</a>
+<a name='L632'></a><a href='#L632'>632</a>
+<a name='L633'></a><a href='#L633'>633</a>
+<a name='L634'></a><a href='#L634'>634</a>
+<a name='L635'></a><a href='#L635'>635</a>
+<a name='L636'></a><a href='#L636'>636</a>
+<a name='L637'></a><a href='#L637'>637</a>
+<a name='L638'></a><a href='#L638'>638</a>
+<a name='L639'></a><a href='#L639'>639</a>
+<a name='L640'></a><a href='#L640'>640</a>
+<a name='L641'></a><a href='#L641'>641</a>
+<a name='L642'></a><a href='#L642'>642</a>
+<a name='L643'></a><a href='#L643'>643</a>
+<a name='L644'></a><a href='#L644'>644</a>
+<a name='L645'></a><a href='#L645'>645</a>
+<a name='L646'></a><a href='#L646'>646</a>
+<a name='L647'></a><a href='#L647'>647</a>
+<a name='L648'></a><a href='#L648'>648</a>
+<a name='L649'></a><a href='#L649'>649</a>
+<a name='L650'></a><a href='#L650'>650</a>
+<a name='L651'></a><a href='#L651'>651</a>
+<a name='L652'></a><a href='#L652'>652</a>
+<a name='L653'></a><a href='#L653'>653</a>
+<a name='L654'></a><a href='#L654'>654</a>
+<a name='L655'></a><a href='#L655'>655</a>
+<a name='L656'></a><a href='#L656'>656</a>
+<a name='L657'></a><a href='#L657'>657</a>
+<a name='L658'></a><a href='#L658'>658</a>
+<a name='L659'></a><a href='#L659'>659</a>
+<a name='L660'></a><a href='#L660'>660</a>
+<a name='L661'></a><a href='#L661'>661</a>
+<a name='L662'></a><a href='#L662'>662</a>
+<a name='L663'></a><a href='#L663'>663</a>
+<a name='L664'></a><a href='#L664'>664</a>
+<a name='L665'></a><a href='#L665'>665</a>
+<a name='L666'></a><a href='#L666'>666</a>
+<a name='L667'></a><a href='#L667'>667</a>
+<a name='L668'></a><a href='#L668'>668</a>
+<a name='L669'></a><a href='#L669'>669</a>
+<a name='L670'></a><a href='#L670'>670</a>
+<a name='L671'></a><a href='#L671'>671</a>
+<a name='L672'></a><a href='#L672'>672</a>
+<a name='L673'></a><a href='#L673'>673</a>
+<a name='L674'></a><a href='#L674'>674</a>
+<a name='L675'></a><a href='#L675'>675</a>
+<a name='L676'></a><a href='#L676'>676</a>
+<a name='L677'></a><a href='#L677'>677</a>
+<a name='L678'></a><a href='#L678'>678</a>
+<a name='L679'></a><a href='#L679'>679</a>
+<a name='L680'></a><a href='#L680'>680</a>
+<a name='L681'></a><a href='#L681'>681</a>
+<a name='L682'></a><a href='#L682'>682</a>
+<a name='L683'></a><a href='#L683'>683</a>
+<a name='L684'></a><a href='#L684'>684</a>
+<a name='L685'></a><a href='#L685'>685</a>
+<a name='L686'></a><a href='#L686'>686</a>
+<a name='L687'></a><a href='#L687'>687</a>
+<a name='L688'></a><a href='#L688'>688</a>
+<a name='L689'></a><a href='#L689'>689</a>
+<a name='L690'></a><a href='#L690'>690</a>
+<a name='L691'></a><a href='#L691'>691</a>
+<a name='L692'></a><a href='#L692'>692</a>
+<a name='L693'></a><a href='#L693'>693</a>
+<a name='L694'></a><a href='#L694'>694</a>
+<a name='L695'></a><a href='#L695'>695</a>
+<a name='L696'></a><a href='#L696'>696</a>
+<a name='L697'></a><a href='#L697'>697</a>
+<a name='L698'></a><a href='#L698'>698</a>
+<a name='L699'></a><a href='#L699'>699</a>
+<a name='L700'></a><a href='#L700'>700</a>
+<a name='L701'></a><a href='#L701'>701</a>
+<a name='L702'></a><a href='#L702'>702</a>
+<a name='L703'></a><a href='#L703'>703</a>
+<a name='L704'></a><a href='#L704'>704</a>
+<a name='L705'></a><a href='#L705'>705</a>
+<a name='L706'></a><a href='#L706'>706</a>
+<a name='L707'></a><a href='#L707'>707</a>
+<a name='L708'></a><a href='#L708'>708</a>
+<a name='L709'></a><a href='#L709'>709</a>
+<a name='L710'></a><a href='#L710'>710</a>
+<a name='L711'></a><a href='#L711'>711</a>
+<a name='L712'></a><a href='#L712'>712</a>
+<a name='L713'></a><a href='#L713'>713</a>
+<a name='L714'></a><a href='#L714'>714</a>
+<a name='L715'></a><a href='#L715'>715</a>
+<a name='L716'></a><a href='#L716'>716</a>
+<a name='L717'></a><a href='#L717'>717</a>
+<a name='L718'></a><a href='#L718'>718</a>
+<a name='L719'></a><a href='#L719'>719</a>
+<a name='L720'></a><a href='#L720'>720</a>
+<a name='L721'></a><a href='#L721'>721</a>
+<a name='L722'></a><a href='#L722'>722</a>
+<a name='L723'></a><a href='#L723'>723</a>
+<a name='L724'></a><a href='#L724'>724</a>
+<a name='L725'></a><a href='#L725'>725</a>
+<a name='L726'></a><a href='#L726'>726</a>
+<a name='L727'></a><a href='#L727'>727</a>
+<a name='L728'></a><a href='#L728'>728</a>
+<a name='L729'></a><a href='#L729'>729</a>
+<a name='L730'></a><a href='#L730'>730</a>
+<a name='L731'></a><a href='#L731'>731</a>
+<a name='L732'></a><a href='#L732'>732</a>
+<a name='L733'></a><a href='#L733'>733</a>
+<a name='L734'></a><a href='#L734'>734</a>
+<a name='L735'></a><a href='#L735'>735</a>
+<a name='L736'></a><a href='#L736'>736</a>
+<a name='L737'></a><a href='#L737'>737</a>
+<a name='L738'></a><a href='#L738'>738</a>
+<a name='L739'></a><a href='#L739'>739</a>
+<a name='L740'></a><a href='#L740'>740</a>
+<a name='L741'></a><a href='#L741'>741</a>
+<a name='L742'></a><a href='#L742'>742</a>
+<a name='L743'></a><a href='#L743'>743</a>
+<a name='L744'></a><a href='#L744'>744</a>
+<a name='L745'></a><a href='#L745'>745</a>
+<a name='L746'></a><a href='#L746'>746</a>
+<a name='L747'></a><a href='#L747'>747</a>
+<a name='L748'></a><a href='#L748'>748</a>
+<a name='L749'></a><a href='#L749'>749</a>
+<a name='L750'></a><a href='#L750'>750</a>
+<a name='L751'></a><a href='#L751'>751</a>
+<a name='L752'></a><a href='#L752'>752</a>
+<a name='L753'></a><a href='#L753'>753</a>
+<a name='L754'></a><a href='#L754'>754</a>
+<a name='L755'></a><a href='#L755'>755</a>
+<a name='L756'></a><a href='#L756'>756</a>
+<a name='L757'></a><a href='#L757'>757</a>
+<a name='L758'></a><a href='#L758'>758</a>
+<a name='L759'></a><a href='#L759'>759</a>
+<a name='L760'></a><a href='#L760'>760</a>
+<a name='L761'></a><a href='#L761'>761</a>
+<a name='L762'></a><a href='#L762'>762</a>
+<a name='L763'></a><a href='#L763'>763</a>
+<a name='L764'></a><a href='#L764'>764</a>
+<a name='L765'></a><a href='#L765'>765</a>
+<a name='L766'></a><a href='#L766'>766</a>
+<a name='L767'></a><a href='#L767'>767</a>
+<a name='L768'></a><a href='#L768'>768</a>
+<a name='L769'></a><a href='#L769'>769</a>
+<a name='L770'></a><a href='#L770'>770</a>
+<a name='L771'></a><a href='#L771'>771</a>
+<a name='L772'></a><a href='#L772'>772</a>
+<a name='L773'></a><a href='#L773'>773</a>
+<a name='L774'></a><a href='#L774'>774</a>
+<a name='L775'></a><a href='#L775'>775</a>
+<a name='L776'></a><a href='#L776'>776</a>
+<a name='L777'></a><a href='#L777'>777</a>
+<a name='L778'></a><a href='#L778'>778</a>
+<a name='L779'></a><a href='#L779'>779</a>
+<a name='L780'></a><a href='#L780'>780</a>
+<a name='L781'></a><a href='#L781'>781</a>
+<a name='L782'></a><a href='#L782'>782</a>
+<a name='L783'></a><a href='#L783'>783</a>
+<a name='L784'></a><a href='#L784'>784</a>
+<a name='L785'></a><a href='#L785'>785</a>
+<a name='L786'></a><a href='#L786'>786</a>
+<a name='L787'></a><a href='#L787'>787</a>
+<a name='L788'></a><a href='#L788'>788</a>
+<a name='L789'></a><a href='#L789'>789</a>
+<a name='L790'></a><a href='#L790'>790</a>
+<a name='L791'></a><a href='#L791'>791</a>
+<a name='L792'></a><a href='#L792'>792</a>
+<a name='L793'></a><a href='#L793'>793</a>
+<a name='L794'></a><a href='#L794'>794</a>
+<a name='L795'></a><a href='#L795'>795</a>
+<a name='L796'></a><a href='#L796'>796</a>
+<a name='L797'></a><a href='#L797'>797</a>
+<a name='L798'></a><a href='#L798'>798</a>
+<a name='L799'></a><a href='#L799'>799</a>
+<a name='L800'></a><a href='#L800'>800</a>
+<a name='L801'></a><a href='#L801'>801</a>
+<a name='L802'></a><a href='#L802'>802</a>
+<a name='L803'></a><a href='#L803'>803</a>
+<a name='L804'></a><a href='#L804'>804</a>
+<a name='L805'></a><a href='#L805'>805</a>
+<a name='L806'></a><a href='#L806'>806</a>
+<a name='L807'></a><a href='#L807'>807</a>
+<a name='L808'></a><a href='#L808'>808</a>
+<a name='L809'></a><a href='#L809'>809</a>
+<a name='L810'></a><a href='#L810'>810</a>
+<a name='L811'></a><a href='#L811'>811</a>
+<a name='L812'></a><a href='#L812'>812</a>
+<a name='L813'></a><a href='#L813'>813</a>
+<a name='L814'></a><a href='#L814'>814</a>
+<a name='L815'></a><a href='#L815'>815</a>
+<a name='L816'></a><a href='#L816'>816</a>
+<a name='L817'></a><a href='#L817'>817</a>
+<a name='L818'></a><a href='#L818'>818</a>
+<a name='L819'></a><a href='#L819'>819</a>
+<a name='L820'></a><a href='#L820'>820</a>
+<a name='L821'></a><a href='#L821'>821</a>
+<a name='L822'></a><a href='#L822'>822</a>
+<a name='L823'></a><a href='#L823'>823</a>
+<a name='L824'></a><a href='#L824'>824</a>
+<a name='L825'></a><a href='#L825'>825</a>
+<a name='L826'></a><a href='#L826'>826</a>
+<a name='L827'></a><a href='#L827'>827</a>
+<a name='L828'></a><a href='#L828'>828</a>
+<a name='L829'></a><a href='#L829'>829</a>
+<a name='L830'></a><a href='#L830'>830</a>
+<a name='L831'></a><a href='#L831'>831</a>
+<a name='L832'></a><a href='#L832'>832</a>
+<a name='L833'></a><a href='#L833'>833</a>
+<a name='L834'></a><a href='#L834'>834</a>
+<a name='L835'></a><a href='#L835'>835</a>
+<a name='L836'></a><a href='#L836'>836</a>
+<a name='L837'></a><a href='#L837'>837</a>
+<a name='L838'></a><a href='#L838'>838</a>
+<a name='L839'></a><a href='#L839'>839</a>
+<a name='L840'></a><a href='#L840'>840</a>
+<a name='L841'></a><a href='#L841'>841</a>
+<a name='L842'></a><a href='#L842'>842</a>
+<a name='L843'></a><a href='#L843'>843</a>
+<a name='L844'></a><a href='#L844'>844</a>
+<a name='L845'></a><a href='#L845'>845</a>
+<a name='L846'></a><a href='#L846'>846</a>
+<a name='L847'></a><a href='#L847'>847</a>
+<a name='L848'></a><a href='#L848'>848</a>
+<a name='L849'></a><a href='#L849'>849</a>
+<a name='L850'></a><a href='#L850'>850</a>
+<a name='L851'></a><a href='#L851'>851</a>
+<a name='L852'></a><a href='#L852'>852</a>
+<a name='L853'></a><a href='#L853'>853</a>
+<a name='L854'></a><a href='#L854'>854</a>
+<a name='L855'></a><a href='#L855'>855</a>
+<a name='L856'></a><a href='#L856'>856</a>
+<a name='L857'></a><a href='#L857'>857</a>
+<a name='L858'></a><a href='#L858'>858</a>
+<a name='L859'></a><a href='#L859'>859</a>
+<a name='L860'></a><a href='#L860'>860</a>
+<a name='L861'></a><a href='#L861'>861</a>
+<a name='L862'></a><a href='#L862'>862</a>
+<a name='L863'></a><a href='#L863'>863</a>
+<a name='L864'></a><a href='#L864'>864</a>
+<a name='L865'></a><a href='#L865'>865</a>
+<a name='L866'></a><a href='#L866'>866</a>
+<a name='L867'></a><a href='#L867'>867</a>
+<a name='L868'></a><a href='#L868'>868</a>
+<a name='L869'></a><a href='#L869'>869</a>
+<a name='L870'></a><a href='#L870'>870</a>
+<a name='L871'></a><a href='#L871'>871</a>
+<a name='L872'></a><a href='#L872'>872</a>
+<a name='L873'></a><a href='#L873'>873</a>
+<a name='L874'></a><a href='#L874'>874</a>
+<a name='L875'></a><a href='#L875'>875</a>
+<a name='L876'></a><a href='#L876'>876</a>
+<a name='L877'></a><a href='#L877'>877</a>
+<a name='L878'></a><a href='#L878'>878</a>
+<a name='L879'></a><a href='#L879'>879</a>
+<a name='L880'></a><a href='#L880'>880</a>
+<a name='L881'></a><a href='#L881'>881</a>
+<a name='L882'></a><a href='#L882'>882</a>
+<a name='L883'></a><a href='#L883'>883</a>
+<a name='L884'></a><a href='#L884'>884</a>
+<a name='L885'></a><a href='#L885'>885</a>
+<a name='L886'></a><a href='#L886'>886</a>
+<a name='L887'></a><a href='#L887'>887</a>
+<a name='L888'></a><a href='#L888'>888</a>
+<a name='L889'></a><a href='#L889'>889</a>
+<a name='L890'></a><a href='#L890'>890</a>
+<a name='L891'></a><a href='#L891'>891</a>
+<a name='L892'></a><a href='#L892'>892</a>
+<a name='L893'></a><a href='#L893'>893</a>
+<a name='L894'></a><a href='#L894'>894</a>
+<a name='L895'></a><a href='#L895'>895</a>
+<a name='L896'></a><a href='#L896'>896</a>
+<a name='L897'></a><a href='#L897'>897</a>
+<a name='L898'></a><a href='#L898'>898</a>
+<a name='L899'></a><a href='#L899'>899</a>
+<a name='L900'></a><a href='#L900'>900</a>
+<a name='L901'></a><a href='#L901'>901</a>
+<a name='L902'></a><a href='#L902'>902</a>
+<a name='L903'></a><a href='#L903'>903</a>
+<a name='L904'></a><a href='#L904'>904</a>
+<a name='L905'></a><a href='#L905'>905</a>
+<a name='L906'></a><a href='#L906'>906</a>
+<a name='L907'></a><a href='#L907'>907</a>
+<a name='L908'></a><a href='#L908'>908</a>
+<a name='L909'></a><a href='#L909'>909</a>
+<a name='L910'></a><a href='#L910'>910</a>
+<a name='L911'></a><a href='#L911'>911</a>
+<a name='L912'></a><a href='#L912'>912</a>
+<a name='L913'></a><a href='#L913'>913</a>
+<a name='L914'></a><a href='#L914'>914</a>
+<a name='L915'></a><a href='#L915'>915</a>
+<a name='L916'></a><a href='#L916'>916</a>
+<a name='L917'></a><a href='#L917'>917</a>
+<a name='L918'></a><a href='#L918'>918</a>
+<a name='L919'></a><a href='#L919'>919</a>
+<a name='L920'></a><a href='#L920'>920</a>
+<a name='L921'></a><a href='#L921'>921</a>
+<a name='L922'></a><a href='#L922'>922</a>
+<a name='L923'></a><a href='#L923'>923</a>
+<a name='L924'></a><a href='#L924'>924</a>
+<a name='L925'></a><a href='#L925'>925</a>
+<a name='L926'></a><a href='#L926'>926</a>
+<a name='L927'></a><a href='#L927'>927</a>
+<a name='L928'></a><a href='#L928'>928</a>
+<a name='L929'></a><a href='#L929'>929</a>
+<a name='L930'></a><a href='#L930'>930</a>
+<a name='L931'></a><a href='#L931'>931</a>
+<a name='L932'></a><a href='#L932'>932</a>
+<a name='L933'></a><a href='#L933'>933</a>
+<a name='L934'></a><a href='#L934'>934</a>
+<a name='L935'></a><a href='#L935'>935</a>
+<a name='L936'></a><a href='#L936'>936</a>
+<a name='L937'></a><a href='#L937'>937</a>
+<a name='L938'></a><a href='#L938'>938</a>
+<a name='L939'></a><a href='#L939'>939</a>
+<a name='L940'></a><a href='#L940'>940</a>
+<a name='L941'></a><a href='#L941'>941</a>
+<a name='L942'></a><a href='#L942'>942</a>
+<a name='L943'></a><a href='#L943'>943</a>
+<a name='L944'></a><a href='#L944'>944</a>
+<a name='L945'></a><a href='#L945'>945</a>
+<a name='L946'></a><a href='#L946'>946</a>
+<a name='L947'></a><a href='#L947'>947</a>
+<a name='L948'></a><a href='#L948'>948</a>
+<a name='L949'></a><a href='#L949'>949</a>
+<a name='L950'></a><a href='#L950'>950</a>
+<a name='L951'></a><a href='#L951'>951</a>
+<a name='L952'></a><a href='#L952'>952</a>
+<a name='L953'></a><a href='#L953'>953</a>
+<a name='L954'></a><a href='#L954'>954</a>
+<a name='L955'></a><a href='#L955'>955</a>
+<a name='L956'></a><a href='#L956'>956</a>
+<a name='L957'></a><a href='#L957'>957</a>
+<a name='L958'></a><a href='#L958'>958</a>
+<a name='L959'></a><a href='#L959'>959</a>
+<a name='L960'></a><a href='#L960'>960</a>
+<a name='L961'></a><a href='#L961'>961</a>
+<a name='L962'></a><a href='#L962'>962</a>
+<a name='L963'></a><a href='#L963'>963</a>
+<a name='L964'></a><a href='#L964'>964</a>
+<a name='L965'></a><a href='#L965'>965</a>
+<a name='L966'></a><a href='#L966'>966</a>
+<a name='L967'></a><a href='#L967'>967</a>
+<a name='L968'></a><a href='#L968'>968</a>
+<a name='L969'></a><a href='#L969'>969</a>
+<a name='L970'></a><a href='#L970'>970</a>
+<a name='L971'></a><a href='#L971'>971</a>
+<a name='L972'></a><a href='#L972'>972</a>
+<a name='L973'></a><a href='#L973'>973</a>
+<a name='L974'></a><a href='#L974'>974</a>
+<a name='L975'></a><a href='#L975'>975</a>
+<a name='L976'></a><a href='#L976'>976</a>
+<a name='L977'></a><a href='#L977'>977</a>
+<a name='L978'></a><a href='#L978'>978</a>
+<a name='L979'></a><a href='#L979'>979</a>
+<a name='L980'></a><a href='#L980'>980</a>
+<a name='L981'></a><a href='#L981'>981</a>
+<a name='L982'></a><a href='#L982'>982</a>
+<a name='L983'></a><a href='#L983'>983</a>
+<a name='L984'></a><a href='#L984'>984</a>
+<a name='L985'></a><a href='#L985'>985</a>
+<a name='L986'></a><a href='#L986'>986</a>
+<a name='L987'></a><a href='#L987'>987</a>
+<a name='L988'></a><a href='#L988'>988</a>
+<a name='L989'></a><a href='#L989'>989</a>
+<a name='L990'></a><a href='#L990'>990</a>
+<a name='L991'></a><a href='#L991'>991</a>
+<a name='L992'></a><a href='#L992'>992</a>
+<a name='L993'></a><a href='#L993'>993</a>
+<a name='L994'></a><a href='#L994'>994</a>
+<a name='L995'></a><a href='#L995'>995</a>
+<a name='L996'></a><a href='#L996'>996</a>
+<a name='L997'></a><a href='#L997'>997</a>
+<a name='L998'></a><a href='#L998'>998</a>
+<a name='L999'></a><a href='#L999'>999</a>
+<a name='L1000'></a><a href='#L1000'>1000</a>
+<a name='L1001'></a><a href='#L1001'>1001</a>
+<a name='L1002'></a><a href='#L1002'>1002</a>
+<a name='L1003'></a><a href='#L1003'>1003</a>
+<a name='L1004'></a><a href='#L1004'>1004</a>
+<a name='L1005'></a><a href='#L1005'>1005</a>
+<a name='L1006'></a><a href='#L1006'>1006</a>
+<a name='L1007'></a><a href='#L1007'>1007</a>
+<a name='L1008'></a><a href='#L1008'>1008</a>
+<a name='L1009'></a><a href='#L1009'>1009</a>
+<a name='L1010'></a><a href='#L1010'>1010</a>
+<a name='L1011'></a><a href='#L1011'>1011</a>
+<a name='L1012'></a><a href='#L1012'>1012</a>
+<a name='L1013'></a><a href='#L1013'>1013</a>
+<a name='L1014'></a><a href='#L1014'>1014</a>
+<a name='L1015'></a><a href='#L1015'>1015</a>
+<a name='L1016'></a><a href='#L1016'>1016</a>
+<a name='L1017'></a><a href='#L1017'>1017</a>
+<a name='L1018'></a><a href='#L1018'>1018</a>
+<a name='L1019'></a><a href='#L1019'>1019</a>
+<a name='L1020'></a><a href='#L1020'>1020</a>
+<a name='L1021'></a><a href='#L1021'>1021</a>
+<a name='L1022'></a><a href='#L1022'>1022</a>
+<a name='L1023'></a><a href='#L1023'>1023</a>
+<a name='L1024'></a><a href='#L1024'>1024</a>
+<a name='L1025'></a><a href='#L1025'>1025</a>
+<a name='L1026'></a><a href='#L1026'>1026</a>
+<a name='L1027'></a><a href='#L1027'>1027</a>
+<a name='L1028'></a><a href='#L1028'>1028</a>
+<a name='L1029'></a><a href='#L1029'>1029</a>
+<a name='L1030'></a><a href='#L1030'>1030</a>
+<a name='L1031'></a><a href='#L1031'>1031</a>
+<a name='L1032'></a><a href='#L1032'>1032</a>
+<a name='L1033'></a><a href='#L1033'>1033</a>
+<a name='L1034'></a><a href='#L1034'>1034</a>
+<a name='L1035'></a><a href='#L1035'>1035</a>
+<a name='L1036'></a><a href='#L1036'>1036</a>
+<a name='L1037'></a><a href='#L1037'>1037</a>
+<a name='L1038'></a><a href='#L1038'>1038</a>
+<a name='L1039'></a><a href='#L1039'>1039</a>
+<a name='L1040'></a><a href='#L1040'>1040</a>
+<a name='L1041'></a><a href='#L1041'>1041</a>
+<a name='L1042'></a><a href='#L1042'>1042</a>
+<a name='L1043'></a><a href='#L1043'>1043</a>
+<a name='L1044'></a><a href='#L1044'>1044</a>
+<a name='L1045'></a><a href='#L1045'>1045</a>
+<a name='L1046'></a><a href='#L1046'>1046</a>
+<a name='L1047'></a><a href='#L1047'>1047</a>
+<a name='L1048'></a><a href='#L1048'>1048</a>
+<a name='L1049'></a><a href='#L1049'>1049</a>
+<a name='L1050'></a><a href='#L1050'>1050</a>
+<a name='L1051'></a><a href='#L1051'>1051</a>
+<a name='L1052'></a><a href='#L1052'>1052</a>
+<a name='L1053'></a><a href='#L1053'>1053</a>
+<a name='L1054'></a><a href='#L1054'>1054</a>
+<a name='L1055'></a><a href='#L1055'>1055</a>
+<a name='L1056'></a><a href='#L1056'>1056</a>
+<a name='L1057'></a><a href='#L1057'>1057</a>
+<a name='L1058'></a><a href='#L1058'>1058</a>
+<a name='L1059'></a><a href='#L1059'>1059</a>
+<a name='L1060'></a><a href='#L1060'>1060</a>
+<a name='L1061'></a><a href='#L1061'>1061</a>
+<a name='L1062'></a><a href='#L1062'>1062</a>
+<a name='L1063'></a><a href='#L1063'>1063</a>
+<a name='L1064'></a><a href='#L1064'>1064</a>
+<a name='L1065'></a><a href='#L1065'>1065</a>
+<a name='L1066'></a><a href='#L1066'>1066</a>
+<a name='L1067'></a><a href='#L1067'>1067</a>
+<a name='L1068'></a><a href='#L1068'>1068</a>
+<a name='L1069'></a><a href='#L1069'>1069</a>
+<a name='L1070'></a><a href='#L1070'>1070</a>
+<a name='L1071'></a><a href='#L1071'>1071</a>
+<a name='L1072'></a><a href='#L1072'>1072</a>
+<a name='L1073'></a><a href='#L1073'>1073</a>
+<a name='L1074'></a><a href='#L1074'>1074</a>
+<a name='L1075'></a><a href='#L1075'>1075</a>
+<a name='L1076'></a><a href='#L1076'>1076</a>
+<a name='L1077'></a><a href='#L1077'>1077</a>
+<a name='L1078'></a><a href='#L1078'>1078</a>
+<a name='L1079'></a><a href='#L1079'>1079</a>
+<a name='L1080'></a><a href='#L1080'>1080</a>
+<a name='L1081'></a><a href='#L1081'>1081</a>
+<a name='L1082'></a><a href='#L1082'>1082</a>
+<a name='L1083'></a><a href='#L1083'>1083</a>
+<a name='L1084'></a><a href='#L1084'>1084</a>
+<a name='L1085'></a><a href='#L1085'>1085</a>
+<a name='L1086'></a><a href='#L1086'>1086</a>
+<a name='L1087'></a><a href='#L1087'>1087</a>
+<a name='L1088'></a><a href='#L1088'>1088</a>
+<a name='L1089'></a><a href='#L1089'>1089</a>
+<a name='L1090'></a><a href='#L1090'>1090</a>
+<a name='L1091'></a><a href='#L1091'>1091</a>
+<a name='L1092'></a><a href='#L1092'>1092</a>
+<a name='L1093'></a><a href='#L1093'>1093</a>
+<a name='L1094'></a><a href='#L1094'>1094</a>
+<a name='L1095'></a><a href='#L1095'>1095</a>
+<a name='L1096'></a><a href='#L1096'>1096</a>
+<a name='L1097'></a><a href='#L1097'>1097</a>
+<a name='L1098'></a><a href='#L1098'>1098</a>
+<a name='L1099'></a><a href='#L1099'>1099</a>
+<a name='L1100'></a><a href='#L1100'>1100</a>
+<a name='L1101'></a><a href='#L1101'>1101</a>
+<a name='L1102'></a><a href='#L1102'>1102</a>
+<a name='L1103'></a><a href='#L1103'>1103</a>
+<a name='L1104'></a><a href='#L1104'>1104</a>
+<a name='L1105'></a><a href='#L1105'>1105</a>
+<a name='L1106'></a><a href='#L1106'>1106</a>
+<a name='L1107'></a><a href='#L1107'>1107</a>
+<a name='L1108'></a><a href='#L1108'>1108</a>
+<a name='L1109'></a><a href='#L1109'>1109</a>
+<a name='L1110'></a><a href='#L1110'>1110</a>
+<a name='L1111'></a><a href='#L1111'>1111</a>
+<a name='L1112'></a><a href='#L1112'>1112</a>
+<a name='L1113'></a><a href='#L1113'>1113</a>
+<a name='L1114'></a><a href='#L1114'>1114</a>
+<a name='L1115'></a><a href='#L1115'>1115</a>
+<a name='L1116'></a><a href='#L1116'>1116</a>
+<a name='L1117'></a><a href='#L1117'>1117</a>
+<a name='L1118'></a><a href='#L1118'>1118</a>
+<a name='L1119'></a><a href='#L1119'>1119</a>
+<a name='L1120'></a><a href='#L1120'>1120</a>
+<a name='L1121'></a><a href='#L1121'>1121</a>
+<a name='L1122'></a><a href='#L1122'>1122</a>
+<a name='L1123'></a><a href='#L1123'>1123</a>
+<a name='L1124'></a><a href='#L1124'>1124</a>
+<a name='L1125'></a><a href='#L1125'>1125</a>
+<a name='L1126'></a><a href='#L1126'>1126</a>
+<a name='L1127'></a><a href='#L1127'>1127</a>
+<a name='L1128'></a><a href='#L1128'>1128</a>
+<a name='L1129'></a><a href='#L1129'>1129</a>
+<a name='L1130'></a><a href='#L1130'>1130</a>
+<a name='L1131'></a><a href='#L1131'>1131</a>
+<a name='L1132'></a><a href='#L1132'>1132</a>
+<a name='L1133'></a><a href='#L1133'>1133</a>
+<a name='L1134'></a><a href='#L1134'>1134</a>
+<a name='L1135'></a><a href='#L1135'>1135</a>
+<a name='L1136'></a><a href='#L1136'>1136</a>
+<a name='L1137'></a><a href='#L1137'>1137</a>
+<a name='L1138'></a><a href='#L1138'>1138</a>
+<a name='L1139'></a><a href='#L1139'>1139</a>
+<a name='L1140'></a><a href='#L1140'>1140</a>
+<a name='L1141'></a><a href='#L1141'>1141</a>
+<a name='L1142'></a><a href='#L1142'>1142</a>
+<a name='L1143'></a><a href='#L1143'>1143</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">190x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">115x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">115x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">115x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1686x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">160x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">28x</span>
+<span class="cline-any cline-yes">28x</span>
+<span class="cline-any cline-yes">28x</span>
+<span class="cline-any cline-yes">316x</span>
+<span class="cline-any cline-yes">316x</span>
+<span class="cline-any cline-yes">288x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">286x</span>
+<span class="cline-any cline-yes">286x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">15460x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-yes">238x</span>
+<span class="cline-any cline-yes">61x</span>
+<span class="cline-any cline-yes">61x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">177x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">173x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">170x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">166x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">164x</span>
+<span class="cline-any cline-yes">164x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">160x</span>
+<span class="cline-any cline-yes">160x</span>
+<span class="cline-any cline-yes">160x</span>
+<span class="cline-any cline-yes">160x</span>
+<span class="cline-any cline-yes">1395x</span>
+<span class="cline-any cline-yes">1395x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1383x</span>
+<span class="cline-any cline-yes">1383x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1383x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1382x</span>
+<span class="cline-any cline-yes">1382x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">160x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">160x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">160x</span>
+<span class="cline-any cline-yes">160x</span>
+<span class="cline-any cline-yes">160x</span>
+<span class="cline-any cline-yes">160x</span>
+<span class="cline-any cline-yes">238x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">410x</span>
+<span class="cline-any cline-yes">410x</span>
+<span class="cline-any cline-yes">410x</span>
+<span class="cline-any cline-yes">2457x</span>
+<span class="cline-any cline-yes">2457x</span>
+<span class="cline-any cline-yes">2457x</span>
+<span class="cline-any cline-yes">2457x</span>
+<span class="cline-any cline-yes">2457x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">80x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">118x</span>
+<span class="cline-any cline-yes">118x</span>
+<span class="cline-any cline-yes">106x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">95x</span>
+<span class="cline-any cline-yes">95x</span>
+<span class="cline-any cline-yes">95x</span>
+<span class="cline-any cline-yes">95x</span>
+<span class="cline-any cline-yes">93x</span>
+<span class="cline-any cline-yes">517x</span>
+<span class="cline-any cline-yes">79x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">95x</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">108x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">16x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">92x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">32x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">57x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">57x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">47x</span>
+<span class="cline-any cline-yes">40x</span>
+<span class="cline-any cline-yes">37x</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">47x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">115x</span>
+<span class="cline-any cline-yes">115x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">115x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">122x</span>
+<span class="cline-any cline-yes">122x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">122x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">126x</span>
+<span class="cline-any cline-yes">126x</span>
+<span class="cline-any cline-yes">148x</span>
+<span class="cline-any cline-yes">148x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">142x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">141x</span>
+<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">126x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">126x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">155x</span>
+<span class="cline-any cline-yes">155x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">153x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">153x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">149x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">149x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">153x</span>
+<span class="cline-any cline-yes">153x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">149x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">149x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">149x</span>
+<span class="cline-any cline-yes">149x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">145x</span>
+<span class="cline-any cline-yes">153x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">145x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">144x</span>
+<span class="cline-any cline-yes">144x</span>
+<span class="cline-any cline-yes">114x</span>
+<span class="cline-any cline-yes">114x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">110x</span>
+<span class="cline-any cline-yes">110x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">31x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">29x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">161x</span>
+<span class="cline-any cline-yes">128x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">22x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">39x</span>
+<span class="cline-any cline-yes">37x</span>
+<span class="cline-any cline-yes">29x</span>
+<span class="cline-any cline-yes">39x</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">37x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1191x</span>
+<span class="cline-any cline-yes">177x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-yes">288x</span>
+<span class="cline-any cline-yes">288x</span>
+<span class="cline-any cline-yes">288x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-yes">172x</span>
+<span class="cline-any cline-yes">172x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">170x</span>
+<span class="cline-any cline-yes">92x</span>
+<span class="cline-any cline-yes">92x</span>
+<span class="cline-any cline-yes">25x</span>
+<span class="cline-any cline-yes">25x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">25x</span>
+<span class="cline-any cline-yes">25x</span>
+<span class="cline-any cline-yes">25x</span>
+<span class="cline-any cline-yes">25x</span>
+<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-yes">85x</span>
+<span class="cline-any cline-yes">85x</span>
+<span class="cline-any cline-yes">77x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">92x</span>
+<span class="cline-any cline-yes">92x</span>
+<span class="cline-any cline-yes">92x</span>
+<span class="cline-any cline-yes">92x</span>
+<span class="cline-any cline-yes">92x</span>
+<span class="cline-any cline-yes">92x</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">78x</span>
+<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-yes">285x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-yes">152x</span>
+<span class="cline-any cline-yes">129x</span>
+<span class="cline-any cline-yes">152x</span>
+<span class="cline-any cline-yes">152x</span>
+<span class="cline-any cline-yes">152x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">99x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">245x</span>
+<span class="cline-any cline-yes">286x</span>
+<span class="cline-any cline-yes">269x</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">30x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">75x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">55x</span>
+<span class="cline-any cline-yes">55x</span>
+<span class="cline-any cline-yes">55x</span>
+<span class="cline-any cline-yes">55x</span>
+<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-yes">47x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-yes">40x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">86x</span>
+<span class="cline-any cline-yes">86x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">85x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">74x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">74x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35x</span>
+<span class="cline-any cline-yes">40x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">55x</span>
+<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">103x</span>
+<span class="cline-any cline-yes">103x</span>
+<span class="cline-any cline-yes">284x</span>
+<span class="cline-any cline-yes">66x</span>
+<span class="cline-any cline-yes">57x</span>
+<span class="cline-any cline-yes">53x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">218x</span>
+<span class="cline-any cline-yes">218x</span>
+<span class="cline-any cline-yes">25x</span>
+<span class="cline-any cline-yes">46x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">193x</span>
+<span class="cline-any cline-yes">186x</span>
+<span class="cline-any cline-yes">186x</span>
+<span class="cline-any cline-yes">284x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">103x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">229x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18x</span>
+<span class="cline-any cline-yes">18x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { hasUnescapedWildcard, globPatternMatches } from './glob'
+&nbsp;
+/**
+ * Query language for the Banana query fork.
+ *
+ * This module is intentionally independent of Obsidian so the lexer/parser and
+ * tag-glob semantics can be unit-tested in Node/Vitest.
+ */
+&nbsp;
+export type BooleanOperator = 'AND' | 'OR' | 'XOR' | 'XNOR' | 'NAND' | 'NOR'
+export type ComparisonOperator = '=' | '!=' | '&gt;' | '&gt;=' | '&lt;' | '&lt;=' | '~='
+export type TitleMatchMode = 'substring' | 'exact' | 'prefix'
+export type TextMatchMode = 'substring' | 'exact' | 'prefix' | 'glob'
+&nbsp;
+export interface SourceSpan {
+  start: number
+  end: number
+}
+&nbsp;
+interface BaseNode extends SourceSpan {
+  raw: string
+}
+&nbsp;
+export interface TextNode extends BaseNode {
+  kind: 'text'
+  value: string
+}
+&nbsp;
+/** A contiguous free-text run delegated to Banana as one ranked query. */
+export interface TextQueryNode extends BaseNode {
+  kind: 'textQuery'
+  query: string
+  phraseValues: string[]
+}
+&nbsp;
+export interface PhraseNode extends BaseNode {
+  kind: 'phrase'
+  value: string
+}
+&nbsp;
+export interface LiteralNode extends BaseNode {
+  kind: 'literal'
+  value: string
+}
+&nbsp;
+export interface FieldNode extends BaseNode {
+  kind: 'field'
+  field: string
+  value: string
+  comparison?: ComparisonOperator
+  titleMode?: TitleMatchMode
+  /** Matching mode shared by structured text fields. */
+  matchMode?: TextMatchMode
+  /** Original value spelling, retained so escaped glob tokens remain literal. */
+  rawValue?: string
+  /** Tag paths normally use progressive prefix semantics; `=` requests an exact path. */
+  tagExact?: boolean
+}
+&nbsp;
+export interface PropertyNode extends BaseNode {
+  kind: 'property'
+  name: string
+  comparison: 'exists' | ComparisonOperator
+  value?: unknown
+  rawValue?: string
+}
+&nbsp;
+export interface TagNode extends BaseNode {
+  kind: 'tag'
+  pattern: string
+  bare: boolean
+  literalNeedle: string
+}
+&nbsp;
+export interface NotNode extends BaseNode {
+  kind: 'not'
+  child: QueryNode
+}
+&nbsp;
+export interface BinaryNode extends BaseNode {
+  kind: 'binary'
+  operator: BooleanOperator
+  left: QueryNode
+  right: QueryNode
+}
+&nbsp;
+export type QueryNode =
+  | TextNode
+  | TextQueryNode
+  | PhraseNode
+  | LiteralNode
+  | FieldNode
+  | PropertyNode
+  | TagNode
+  | NotNode
+  | BinaryNode
+&nbsp;
+/**
+ * Return original spellings of structured query leaves for independent literal
+ * evidence checks. These spellings must not be mixed into Boolean AST evaluation:
+ * a literal `tag:#x` mention cannot satisfy the semantic `tag:#x` predicate.
+ */
+export function collectLiteralSyntaxSpellings(node: QueryNode): string[] {
+  switch (node.kind) {
+    case 'field':
+    case 'property':
+    case 'literal':
+    case 'tag':
+      return [node.raw]
+    case 'not':
+      return collectLiteralSyntaxSpellings(node.child)
+    case 'binary':
+      return [...collectLiteralSyntaxSpellings(node.left), ...collectLiteralSyntaxSpellings(node.right)]
+    default:
+      return []
+  }
+}
+&nbsp;
+export interface QueryDiagnostic {
+  message: string
+  start: number
+  end: number
+  severity: 'error' | 'warning'
+}
+&nbsp;
+export interface ParsedQueryLanguage {
+  source: string
+  root: QueryNode | null
+  diagnostics: QueryDiagnostic[]
+  isAdvanced: boolean
+}
+&nbsp;
+type LexemeKind = 'atom' | 'phrase' | 'operator' | 'lparen' | 'rparen' | 'eof'
+interface Lexeme extends SourceSpan {
+  kind: LexemeKind
+  raw: string
+  value?: string
+  operator?: string
+}
+&nbsp;
+export interface FieldRegistryEntry {
+  /** Authoritative source inspected by the evaluator. */
+  source: string
+  /** Syntactic value types accepted by this predicate. */
+  valueTypes: readonly string[]
+  /** Matching rule, including whether the value is interpreted as a pattern. */
+  matching: string
+  /** Supported comparison operators. */
+  operators: readonly string[]
+  /** Whether text matching is case-sensitive. */
+  caseSensitive: boolean
+  /** Behavior when the corresponding value is missing. */
+  missing: string
+  /** Semantics when the source value contains multiple values. */
+  multivalue: string
+  /** Files for which the source is meaningful. */
+  appliesTo: string
+  /** Whether existing metadata/indexes are sufficient. */
+  indexing: string
+  /** Approximate query cost. */
+  performance: string
+}
+&nbsp;
+/**
+ * Runtime field registry. Keep this synchronized with `matchesField` and the
+ * query-language reference. The search engine validates names against it.
+ */
+export const FIELD_REGISTRY: Readonly&lt;Record&lt;string, FieldRegistryEntry&gt;&gt; = {
+  title: { source: 'Obsidian displayTitle, otherwise file basename', valueTypes: ['string'], matching: 'case-insensitive substring by default; := exact; ^ prefix; ~ substring', operators: [':', ':=', ':^', ':~', 'glob'], caseSensitive: false, missing: 'unavailable title does not match', multivalue: 'one normalized title', appliesTo: 'all indexed files', indexing: 'existing index plus file metadata', performance: 'low' },
+  file: { source: 'TFile.name including extension', valueTypes: ['string'], matching: 'case-insensitive substring by default; := exact; ^ prefix; ~ substring; * and ? glob', operators: [':', ':=', ':^', ':~', 'glob'], caseSensitive: false, missing: 'does not match', multivalue: 'single filename', appliesTo: 'all indexed files', indexing: 'vault file metadata', performance: 'low' },
+  path: { source: 'vault-relative TFile.path', valueTypes: ['string'], matching: 'case-insensitive substring by default; := exact; ^ prefix; ~ substring; * and ? glob', operators: [':', ':=', ':^', ':~', 'glob'], caseSensitive: false, missing: 'does not match', multivalue: 'single path', appliesTo: 'all indexed files', indexing: 'vault file metadata', performance: 'low' },
+  folder: { source: 'directory portion of TFile.path', valueTypes: ['string'], matching: 'case-insensitive substring by default; := exact; ^ prefix; ~ substring; * and ? glob', operators: [':', ':=', ':^', ':~', 'glob'], caseSensitive: false, missing: 'root-level files have an empty folder and do not match non-empty values', multivalue: 'single folder path', appliesTo: 'all indexed files', indexing: 'vault file metadata', performance: 'low' },
+  ext: { source: 'TFile.extension', valueTypes: ['extension'], matching: 'progressive prefix by default while typing; := exact; ^ prefix; ~ substring; * and ? glob; dot optional', operators: [':', ':=', ':^', ':~', 'glob'], caseSensitive: false, missing: 'files without matching extension do not match', multivalue: 'space-separated alternatives', appliesTo: 'all indexed files', indexing: 'vault file metadata', performance: 'low' },
+  format: { source: 'extension-to-format mapping', valueTypes: ['markdown', 'pdf', 'office', 'image', 'canvas', 'text', 'other'], matching: 'progressive prefix by default while typing; := exact; ^ prefix; ~ substring; * and ? glob', operators: [':', ':=', ':^', ':~', 'glob'], caseSensitive: false, missing: 'unrecognized extensions map to other', multivalue: 'space-separated alternatives', appliesTo: 'all indexed files', indexing: 'static extension map', performance: 'low' },
+  type: { source: 'extension-to-category mapping', valueTypes: ['note', 'document', 'image', 'canvas', 'other'], matching: 'progressive prefix by default while typing; := exact; ^ prefix; ~ substring; * and ? glob', operators: [':', ':=', ':^', ':~', 'glob'], caseSensitive: false, missing: 'unrecognized extensions map to other', multivalue: 'space-separated alternatives', appliesTo: 'all indexed files', indexing: 'static extension map', performance: 'low' },
+  size: { source: 'TFile.stat.size', valueTypes: ['number with optional B/KB/KiB/MB/MiB/GB/GiB'], matching: 'typed numeric comparison', operators: ['=', '!=', '&gt;', '&gt;=', '&lt;', '&lt;='], caseSensitive: false, missing: 'files without stats do not match', multivalue: 'single value', appliesTo: 'all indexed files', indexing: 'vault file metadata', performance: 'low' },
+  words: { source: 'whitespace-delimited tokens in indexed content', valueTypes: ['number'], matching: 'typed numeric comparison', operators: ['=', '!=', '&gt;', '&gt;=', '&lt;', '&lt;='], caseSensitive: false, missing: 'missing content counts as zero words', multivalue: 'single count', appliesTo: 'files with indexed content', indexing: 'cached indexed content', performance: 'medium' },
+  wordcount: { source: 'whitespace-delimited tokens in indexed content', valueTypes: ['number'], matching: 'same as words: typed numeric comparison', operators: ['=', '!=', '&gt;', '&gt;=', '&lt;', '&lt;='], caseSensitive: false, missing: 'missing content counts as zero words', multivalue: 'single count', appliesTo: 'files with indexed content', indexing: 'cached indexed content', performance: 'medium' },
+  created: { source: 'TFile.stat.ctime (filesystem creation time)', valueTypes: ['date'], matching: 'date comparison; date-only equality compares UTC calendar day', operators: ['=', '!=', '&gt;', '&gt;=', '&lt;', '&lt;='], caseSensitive: false, missing: 'files without stats do not match', multivalue: 'single timestamp', appliesTo: 'all indexed files', indexing: 'vault file metadata; not note-authored date', performance: 'low' },
+  modified: { source: 'TFile.stat.mtime (filesystem modification time)', valueTypes: ['date'], matching: 'date comparison; date-only equality compares UTC calendar day', operators: ['=', '!=', '&gt;', '&gt;=', '&lt;', '&lt;='], caseSensitive: false, missing: 'files without stats do not match', multivalue: 'single timestamp', appliesTo: 'all indexed files', indexing: 'vault file metadata', performance: 'low' },
+  tag: { source: 'Obsidian CachedMetadata via getAllTags', valueTypes: ['tag path/glob'], matching: 'progressive segment-prefix matching by default; `=` exact complete path; * and ? stay within one segment; ** whole-segment globstar', operators: [':', ':='], caseSensitive: false, missing: 'no actual tags means no match', multivalue: 'any actual tag path may match', appliesTo: 'files with Obsidian tag metadata', indexing: 'cached metadata; invalidated on metadata/file lifecycle events', performance: 'medium' },
+  tagcount: { source: 'unique tag paths from Obsidian CachedMetadata', valueTypes: ['number'], matching: 'typed numeric comparison', operators: ['=', '!=', '&gt;', '&gt;=', '&lt;', '&lt;='], caseSensitive: false, missing: 'no tags count as zero', multivalue: 'unique full tag paths', appliesTo: 'all indexed files', indexing: 'cached metadata', performance: 'medium' },
+  property: { source: 'Obsidian frontmatter cache', valueTypes: ['string', 'number', 'boolean', 'date', 'array', 'null', 'empty'], matching: 'existence; typed equality/ordering; ~= case-insensitive substring', operators: ['exists', '=', '!=', '&gt;', '&gt;=', '&lt;', '&lt;=', '~='], caseSensitive: false, missing: 'missing property does not match, including !=; explicit null/empty values are distinct', multivalue: 'equality/comparison matches any array element; != means no element equals expected', appliesTo: 'files with frontmatter', indexing: 'cached frontmatter', performance: 'medium' },
+  alias: { source: 'frontmatter aliases/alias', valueTypes: ['string'], matching: 'case-insensitive substring by default; := exact; ^ prefix; ~ substring; * and ? glob', operators: [':', ':=', ':^', ':~', 'glob'], caseSensitive: false, missing: 'no aliases means no match', multivalue: 'any alias may match', appliesTo: 'files with aliases', indexing: 'cached frontmatter', performance: 'low' },
+  content: { source: 'Banana MiniSearch index for word queries; cached document text for punctuation-only queries', valueTypes: ['string'], matching: 'existing ranked full-text search', operators: [':'], caseSensitive: false, missing: 'no content match', multivalue: 'one document content', appliesTo: 'files with indexed text', indexing: 'existing MiniSearch index', performance: 'index-backed' },
+  heading: { source: 'Obsidian CachedMetadata.headings', valueTypes: ['string'], matching: 'case-insensitive substring by default; := exact; ^ prefix; ~ substring; * and ? glob', operators: [':', ':=', ':^', ':~', 'glob'], caseSensitive: false, missing: 'no heading means no match', multivalue: 'any heading may match', appliesTo: 'files with heading metadata', indexing: 'cached metadata', performance: 'low' },
+  section: { source: 'heading-delimited sections in cached Markdown source', valueTypes: ['string'], matching: 'searches one rendered section at a time; AND between section predicates requires a shared section', operators: [':', ':=', ':^', ':~'], caseSensitive: false, missing: 'files without matching section text do not match', multivalue: 'any section may match', appliesTo: 'Markdown-like indexed files', indexing: 'cached source and rendered-text projection', performance: 'medium' },
+  block: { source: 'blank-line-delimited blocks in cached Markdown source', valueTypes: ['string'], matching: 'searches one rendered block at a time; AND between block predicates requires a shared block', operators: [':', ':=', ':^', ':~'], caseSensitive: false, missing: 'files without matching block text do not match', multivalue: 'any block may match', appliesTo: 'indexed text files', indexing: 'cached source and rendered-text projection', performance: 'medium' },
+  line: { source: 'individual lines of cached document text', valueTypes: ['string'], matching: 'case-insensitive substring by default; := exact; ^ prefix; ~ substring; * and ? glob within a line', operators: [':', ':=', ':^', ':~', 'glob'], caseSensitive: false, missing: 'no matching line', multivalue: 'any line may match', appliesTo: 'files with indexed text', indexing: 'cached document text', performance: 'medium' },
+  task: { source: 'Markdown task-list lines in cached text', valueTypes: ['string'], matching: 'todo/done state or substring by default; := exact; ^ prefix; ~ substring; * and ? glob within an actual task line', operators: [':', ':=', ':^', ':~', 'glob'], caseSensitive: false, missing: 'no matching task', multivalue: 'any task may match', appliesTo: 'files with Markdown-like text', indexing: 'cached document text', performance: 'medium' },
+  'task-todo': { source: 'unchecked Markdown task-list lines', valueTypes: ['boolean'], matching: 'presence predicate; false means no unchecked tasks', operators: [':'], caseSensitive: false, missing: 'no tasks means false; explicit false tests absence', multivalue: 'any matching task', appliesTo: 'files with Markdown-like text', indexing: 'cached document text', performance: 'medium' },
+  'task-done': { source: 'checked Markdown task-list lines', valueTypes: ['boolean'], matching: 'presence predicate; false means no checked tasks', operators: [':'], caseSensitive: false, missing: 'no tasks means false; explicit false tests absence', multivalue: 'any matching task', appliesTo: 'files with Markdown-like text', indexing: 'cached document text', performance: 'medium' },
+  linksto: { source: 'Obsidian CachedMetadata.links resolved through metadataCache', valueTypes: ['link target'], matching: 'substring by default; := exact; ^ prefix; ~ substring; * and ? glob against resolved/unresolved target', operators: [':', ':=', ':^', ':~', 'glob'], caseSensitive: false, missing: 'no outgoing links means no match', multivalue: 'any outgoing link may match', appliesTo: 'files with link metadata', indexing: 'cached metadata and resolved link lookup', performance: 'medium' },
+  outlinks: { source: 'outgoing targets from Obsidian CachedMetadata.links', valueTypes: ['link target'], matching: 'same matching behavior as linksto', operators: [':', ':=', ':^', ':~', 'glob'], caseSensitive: false, missing: 'no outgoing links means no match', multivalue: 'any outgoing link may match', appliesTo: 'files with link metadata', indexing: 'cached metadata and resolved link lookup', performance: 'medium' },
+  linkedby: { source: 'metadataCache.resolvedLinks incoming edges', valueTypes: ['source path/title'], matching: 'substring by default; := exact; ^ prefix; ~ substring; * and ? glob against source path/title', operators: [':', ':=', ':^', ':~', 'glob'], caseSensitive: false, missing: 'no incoming links means no match', multivalue: 'any backlink source may match', appliesTo: 'files in Obsidian resolved-link map', indexing: 'Obsidian resolved link graph', performance: 'medium' },
+  inlinks: { source: 'incoming source paths from metadataCache.resolvedLinks', valueTypes: ['source path/title'], matching: 'same matching behavior as linkedby', operators: [':', ':=', ':^', ':~', 'glob'], caseSensitive: false, missing: 'no incoming links means no match', multivalue: 'any backlink source may match', appliesTo: 'files in Obsidian resolved-link map', indexing: 'Obsidian resolved link graph', performance: 'medium' },
+  embed: { source: 'Obsidian CachedMetadata.embeds resolved through metadataCache', valueTypes: ['embed target'], matching: 'substring by default; := exact; ^ prefix; ~ substring; * and ? glob against resolved/unresolved target', operators: [':', ':=', ':^', ':~', 'glob'], caseSensitive: false, missing: 'no embeds means no match', multivalue: 'any embed may match', appliesTo: 'files with embed metadata', indexing: 'cached metadata', performance: 'medium' },
+  contains: { source: 'rendered body text in cached note content', valueTypes: ['string'], matching: 'contiguous rendered-text substring; verified by candidate index', operators: [':', ':=', ':^', ':~'], caseSensitive: false, missing: 'no rendered-text match', multivalue: 'one rendered body', appliesTo: 'files with indexed text', indexing: 'cached rendered-text candidate index', performance: 'index-backed' },
+  is: { source: 'computed note/file state', valueTypes: ['empty', 'orphan', 'tagged', 'untagged', 'todo', 'done', 'note', 'attachment', 'linked', 'unlinked'], matching: 'state predicate, prefix-aware while typing', operators: [':'], caseSensitive: false, missing: 'unsupported completed state is a query diagnostic', multivalue: 'computed file state', appliesTo: 'all indexed files', indexing: 'cached metadata and content', performance: 'medium' },
+  empty: { source: 'rendered body text', valueTypes: ['true', 'false'], matching: 'boolean predicate for an empty rendered body', operators: [':'], caseSensitive: false, missing: 'empty body is true', multivalue: 'single boolean', appliesTo: 'all indexed text files', indexing: 'cached rendered-text projection', performance: 'medium' },
+  orphan: { source: 'resolved incoming-link graph', valueTypes: ['true', 'false'], matching: 'true when no other note links to this file', operators: [':'], caseSensitive: false, missing: 'no incoming links is true', multivalue: 'single boolean', appliesTo: 'files represented in Obsidian link graph', indexing: 'metadataCache.resolvedLinks', performance: 'medium' },
+  linkcount: { source: 'outgoing links in CachedMetadata', valueTypes: ['number'], matching: 'typed numeric comparison of unique resolved/unresolved targets', operators: ['=', '!=', '&gt;', '&gt;=', '&lt;', '&lt;='], caseSensitive: false, missing: 'no outgoing links count as zero', multivalue: 'unique target count', appliesTo: 'all indexed files', indexing: 'cached metadata', performance: 'medium' },
+  backlinkcount: { source: 'incoming source notes in metadataCache.resolvedLinks', valueTypes: ['number'], matching: 'typed numeric comparison of unique linking notes', operators: ['=', '!=', '&gt;', '&gt;=', '&lt;', '&lt;='], caseSensitive: false, missing: 'no backlinks count as zero', multivalue: 'unique source-note count', appliesTo: 'all indexed files', indexing: 'resolved link graph', performance: 'medium' },
+  taskcount: { source: 'task-list lines in cached source', valueTypes: ['number'], matching: 'typed numeric comparison', operators: ['=', '!=', '&gt;', '&gt;=', '&lt;', '&lt;='], caseSensitive: false, missing: 'no tasks count as zero', multivalue: 'task-line count', appliesTo: 'indexed text files', indexing: 'cached source', performance: 'medium' },
+  has: { source: 'frontmatter, tags, headings, tasks, links, embeds, or content cache', valueTypes: ['tags', 'aliases', 'frontmatter', 'headings', 'tasks', 'links', 'embeds', 'content'], matching: 'true when the requested category is present', operators: [':'], caseSensitive: false, missing: 'absent category is false', multivalue: 'presence of any item is sufficient', appliesTo: 'indexed files', indexing: 'Obsidian metadata and cached document text', performance: 'low' },
+  literal: { source: 'cached indexed content, full path, and normalized title', valueTypes: ['string'], matching: 'case-insensitive normalized character substring; never parses embedded syntax', operators: [':'], caseSensitive: false, missing: 'no exact substring means no match', multivalue: 'one document body/path/title haystack', appliesTo: 'files with cached content/metadata', indexing: 'cached document text/context', performance: 'medium' },
+}
+&nbsp;
+const FIELD_NAMES = new Set(Object.keys(FIELD_REGISTRY).filter(field =&gt; field !== 'literal'))
+&nbsp;
+export type QueryFieldAliases = Readonly&lt;Record&lt;string, string&gt;&gt;
+&nbsp;
+function canonicalFieldName(field: string, aliases: QueryFieldAliases = {}): string {
+  const normalized = field.toLocaleLowerCase()
+  // Built-in names always win. Aliases are one-hop parser metadata, never text replacement.
+  if (FIELD_NAMES.has(normalized)) return normalized
+  const rawTarget = aliases[normalized]
+  const target = typeof rawTarget === 'string' ? rawTarget.toLocaleLowerCase() : undefined
+  return target &amp;&amp; FIELD_NAMES.has(target) ? target : normalized
+}
+&nbsp;
+function isKnownFieldName(field: string, aliases: QueryFieldAliases = {}): boolean {
+  return FIELD_NAMES.has(field.toLocaleLowerCase()) || canonicalFieldName(field, aliases) !== field.toLocaleLowerCase()
+}
+&nbsp;
+const SYMBOL_OPERATORS: ReadonlyArray&lt;readonly [string, string]&gt; = [
+  ['!&amp;&amp;', 'NAND'],
+  ['!||', 'NOR'],
+  ['!^', 'XNOR'],
+  ['&amp;&amp;', 'AND'],
+  ['||', 'OR'],
+  ['↑', 'NAND'],
+  ['↓', 'NOR'],
+  ['↔', 'XNOR'],
+  ['&amp;', 'AND'],
+  ['^', 'XOR'],
+]
+&nbsp;
+const isSpace = (char: string | undefined): boolean =&gt; !!char &amp;&amp; /\s/u.test(char)
+const isWordOperator = (word: string): boolean =&gt;
+  ['AND', 'OR', 'NOT', 'XOR', 'XNOR', 'NAND', 'NOR'].includes(word)
+&nbsp;
+function readQuoted(source: string, start: number): { value: string; end: number; closed: boolean } {
+  let index = start + 1
+  let value = ''
+  while (index &lt; source.length) {
+    const char = source[index]
+    if (char === '"') return { value, end: index + 1, closed: true }
+    if (char === '\\' &amp;&amp; index + 1 &lt; source.length) {
+      const next = source[index + 1]
+      // Backslashes only escape syntax characters; elsewhere they are data.
+      <span class="missing-if-branch" title="else path not taken" >E</span>if ('"\\*:=^~()'.includes(next)) {
+        value += next
+        index += 2
+        continue
+      }
+<span class="cstat-no" title="statement not covered" >      value += char</span>
+<span class="cstat-no" title="statement not covered" >      index++</span>
+<span class="cstat-no" title="statement not covered" >      continue</span>
+    }
+    value += char
+    index++
+  }
+<span class="cstat-no" title="statement not covered" >  return { value, end: source.length, closed: false }</span>
+}
+&nbsp;
+function symbolAt(source: string, index: number): readonly [string, string] | undefined {
+  return SYMBOL_OPERATORS.find(([symbol]) =&gt; source.startsWith(symbol, index))
+}
+&nbsp;
+function lex(source: string, diagnostics: QueryDiagnostic[]): Lexeme[] {
+  const lexemes: Lexeme[] = []
+  let index = 0
+  while (index &lt; source.length) {
+    if (isSpace(source[index])) {
+      index++
+      continue
+    }
+    if (source[index] === '(') {
+      lexemes.push({ kind: 'lparen', raw: '(', start: index, end: index + 1 })
+      index++
+      continue
+    }
+    if (source[index] === ')') {
+      lexemes.push({ kind: 'rparen', raw: ')', start: index, end: index + 1 })
+      index++
+      continue
+    }
+    if (source[index] === '"') {
+      const quoted = readQuoted(source, index)
+      lexemes.push({
+        kind: 'phrase', raw: source.slice(index, quoted.end), value: quoted.value,
+        start: index, end: quoted.end,
+      })
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (!quoted.closed) {
+<span class="cstat-no" title="statement not covered" >        diagnostics.push({</span>
+          message: 'Unterminated quoted phrase.', start: index, end: source.length, severity: 'error',
+        })
+      }
+      index = quoted.end
+      continue
+    }
+&nbsp;
+    // Negation and compound symbolic operators are recognized only at token
+    // boundaries. `!=` is kept inside property comparisons, and ordinary
+    // hyphens remain part of filenames/words unless they prefix an atom.
+    if (source[index] === '!') {
+      const compound = symbolAt(source, index)
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (compound &amp;&amp; ['NAND', 'NOR', 'XNOR'].includes(compound[1])) {
+        lexemes.push({ kind: 'operator', raw: compound[0], operator: compound[1], start: index, end: index + compound[0].length })
+        index += compound[0].length
+        continue
+      }
+<span class="cstat-no" title="statement not covered" >      lexemes.push({ kind: 'operator', raw: '!', operator: 'NOT', start: index, end: index + 1 })</span>
+<span class="cstat-no" title="statement not covered" >      index++</span>
+<span class="cstat-no" title="statement not covered" >      continue</span>
+    }
+&nbsp;
+    const leadingSymbol = symbolAt(source, index)
+    if (leadingSymbol) {
+      lexemes.push({ kind: 'operator', raw: leadingSymbol[0], operator: leadingSymbol[1], start: index, end: index + leadingSymbol[0].length })
+      index += leadingSymbol[0].length
+      continue
+    }
+&nbsp;
+    let value = ''
+    let quoteWasClosed = true
+    const start = index
+    while (index &lt; source.length &amp;&amp; !isSpace(source[index]) &amp;&amp; source[index] !== '(' &amp;&amp; source[index] !== ')') {
+      const char = source[index]
+      if (char === '"') {
+        const quoted = readQuoted(source, index)
+        value += source.slice(index, quoted.end)
+        quoteWasClosed = quoted.closed
+        index = quoted.end
+        continue
+      }
+      const symbol = symbolAt(source, index)
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (symbol &amp;&amp; value.length &gt; 0 &amp;&amp; !value.endsWith(':') &amp;&amp; <span class="branch-3 cbranch-no" title="branch not covered" >!value.endsWith('=') &amp;&amp; <span class="branch-4 cbranch-no" title="branch not covered" >!</span>value.endsWith('~')) {</span>
+        // An alias between operands is an operator. In an ordinary word or a
+        // path/field modifier, quote or escape the symbol to keep it literal.
+<span class="cstat-no" title="statement not covered" >        break</span>
+      }
+      if (char === '!' &amp;&amp; source[index + 1] === '=') {
+        value += '!='
+        index += 2
+        continue
+      }
+      value += char
+      index++
+    }
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!quoteWasClosed) {
+<span class="cstat-no" title="statement not covered" >      diagnostics.push({ message: 'Unterminated quoted value.', start, end: source.length, severity: 'error' })</span>
+    }
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!value.length) {
+      // Defensive progress guarantee for odd punctuation sequences.
+<span class="cstat-no" title="statement not covered" >      value = source[index] ?? ''</span>
+<span class="cstat-no" title="statement not covered" >      index++</span>
+    }
+    const end = index
+    const raw = source.slice(start, end)
+    const decoded = value
+    const op = isWordOperator(decoded) ? decoded : undefined
+    lexemes.push(op
+      ? { kind: 'operator', raw, operator: op, start, end }
+      : { kind: 'atom', raw, value: decoded, start, end })
+  }
+  lexemes.push({ kind: 'eof', raw: '', start: source.length, end: source.length })
+  return lexemes
+}
+&nbsp;
+function unquote(raw: string): string {
+  <span class="missing-if-branch" title="else path not taken" >E</span>if (raw.startsWith('"')) {
+    const parsed = readQuoted(raw, 0)
+    return parsed.value
+  }
+<span class="cstat-no" title="statement not covered" >  return raw</span>
+}
+&nbsp;
+function findOutsideQuotes(input: string, needle: string): number {
+  let quoted = false
+  let escaped = false
+  for (let index = 0; index &lt;= input.length - needle.length; index++) {
+    const char = input[index]
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (escaped) { <span class="cstat-no" title="statement not covered" >escaped = false; <span class="cstat-no" title="statement not covered" >c</span>ontinue }</span>
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (char === '\\') { <span class="cstat-no" title="statement not covered" >escaped = true; <span class="cstat-no" title="statement not covered" >c</span>ontinue }</span>
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (char === '"') { <span class="cstat-no" title="statement not covered" >quoted = !quoted; <span class="cstat-no" title="statement not covered" >c</span>ontinue }</span>
+    if (!quoted &amp;&amp; input.startsWith(needle, index)) return index
+  }
+  return -1
+}
+&nbsp;
+function decodeValue(raw: string): string {
+  const trimmed = raw.trim()
+  if (trimmed.startsWith('"')) return unquote(trimmed)
+  return trimmed.replace(/\\(["\\*:=^~()])/gu, '$1')
+}
+&nbsp;
+function decodeTagPattern(raw: string): string {
+  const trimmed = raw.trim()
+  <span class="missing-if-branch" title="else path not taken" >E</span>if (!trimmed.startsWith('"')) return trimmed
+  const closingQuote = <span class="cstat-no" title="statement not covered" >trimmed.endsWith('"') &amp;&amp; trimmed.length &gt; 1 ? trimmed.length - 1 : trimmed.length</span>
+  // In tag patterns, `\*` is meaningful to the glob compiler; only decode
+  // escaped quotes and escaped backslashes at this stage.
+  return trimmed.slice(1, closingQuote).replace(/\\(["\\])/gu, '$1')
+}
+&nbsp;
+function decodeScalar(raw: string): unknown {
+  const text = decodeValue(raw)
+  if (raw.trim().startsWith('"')) return text
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (text === 'true') <span class="cstat-no" title="statement not covered" >return true</span>
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (text === 'false') <span class="cstat-no" title="statement not covered" >return false</span>
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (text === 'null') <span class="cstat-no" title="statement not covered" >return null</span>
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (/^[+-]?(?:\d+\.?\d*|\.\d+)$/u.test(text)) <span class="cstat-no" title="statement not covered" >return Number(text)</span>
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (/^\d{4}-\d{2}-\d{2}(?:$|T)/u.test(text) &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >!Number.isNaN(Date.parse(text))) {</span>
+<span class="cstat-no" title="statement not covered" >    return new Date(text).getTime()</span>
+  }
+  return text
+}
+&nbsp;
+function parseProperty(raw: string, span: SourceSpan): PropertyNode | null {
+  const expression = raw.trim()
+  let quote = false
+  let escaped = false
+  let opAt = -1
+  let comparison: ComparisonOperator | undefined
+  const operators: ComparisonOperator[] = ['&gt;=', '&lt;=', '!=', '~=', '=', '&gt;', '&lt;']
+  for (let index = 0; index &lt; expression.length; index++) {
+    const char = expression[index]
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (escaped) { <span class="cstat-no" title="statement not covered" >escaped = false; <span class="cstat-no" title="statement not covered" >c</span>ontinue }</span>
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (char === '\\') { <span class="cstat-no" title="statement not covered" >escaped = true; <span class="cstat-no" title="statement not covered" >c</span>ontinue }</span>
+    if (char === '"') { quote = !quote; continue }
+    if (quote) continue
+    const operator = operators.find(candidate =&gt; expression.startsWith(candidate, index))
+    if (operator) { opAt = index; comparison = operator; break }
+  }
+  const nameRaw = opAt === -1 ? <span class="branch-0 cbranch-no" title="branch not covered" >expression : e</span>xpression.slice(0, opAt)
+  const name = decodeValue(nameRaw).trim()
+  if (!name) return null
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (opAt === -1) {
+<span class="cstat-no" title="statement not covered" >    return { kind: 'property', name, comparison: 'exists', raw: `property:${raw}`, ...span }</span>
+  }
+  const rawValue = expression.slice(opAt + comparison!.length)
+  // A trailing comparison operator is a normal editing state (for example
+  // `property:status=`). Keep it as an incomplete property node without a
+  // parser error so the UI neither shouts nor falls back to a text query.
+  if (!rawValue.trim()) {
+    return { kind: 'property', name, comparison: comparison!, value: undefined, rawValue, raw: `property:${raw}`, ...span }
+  }
+  return {
+    kind: 'property', name, comparison: comparison!, value: decodeScalar(rawValue),
+    rawValue, raw: `property:${raw}`, ...span,
+  }
+}
+&nbsp;
+function parseFieldAtom(lexeme: Lexeme, diagnostics: QueryDiagnostic[], aliases: QueryFieldAliases = {}): QueryNode | null {
+  const value = lexeme.value ?? <span class="branch-1 cbranch-no" title="branch not covered" >lexeme.raw</span>
+  const colon = findOutsideQuotes(value, ':')
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (colon &lt; 1) <span class="cstat-no" title="statement not covered" >return null</span>
+  const fieldToken = value.slice(0, colon).toLowerCase()
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (!/^[a-z][a-z0-9-]*$/u.test(fieldToken)) <span class="cstat-no" title="statement not covered" >return null</span>
+  const field = canonicalFieldName(fieldToken, aliases)
+  const rawValue = value.slice(colon + 1)
+&nbsp;
+  if (!FIELD_NAMES.has(field)) {
+    // URLs and Windows drive paths are ordinary text, not field expressions.
+    if (/^[a-z][a-z0-9+.-]*:\/\//iu.test(value) || /^[a-z]:[\\/]/iu.test(value)) return null
+    diagnostics.push({ message: `Unsupported field "${field}".`, start: lexeme.start, end: lexeme.end, severity: 'error' })
+    return { kind: 'text', value, raw: lexeme.raw, start: lexeme.start, end: lexeme.end }
+  }
+  if (field === 'property') {
+    // `property:` by itself is an ordinary editing state. It selects no files,
+    // stays on the structured-query path, and does not emit a transient error.
+    if (!rawValue.trim()) {
+      return { kind: 'property', name: '', comparison: 'exists', raw: `property:${rawValue}`, start: lexeme.start, end: lexeme.end }
+    }
+    const property = parseProperty(rawValue, { start: lexeme.start, end: lexeme.end })
+    if (!property) {
+      diagnostics.push({ message: 'Invalid property expression; expected property:name or property:name=value.', start: lexeme.start, end: lexeme.end, severity: 'error' })
+      return { kind: 'text', value, raw: lexeme.raw, start: lexeme.start, end: lexeme.end }
+    }
+    return property
+  }
+&nbsp;
+  if (field === 'tag') {
+    // `tag:=...` selects exact complete tag-path matching. The optional `#`
+    // after the modifier is syntax only; it is not part of the stored pattern.
+    const tagExact = rawValue.startsWith('=')
+    const patternRaw = tagExact ? rawValue.slice(1) : rawValue
+    // Preserve `\*` inside quoted patterns so the glob compiler can distinguish
+    // a literal asterisk from an active wildcard.
+    const pattern = decodeTagPattern(patternRaw).replace(/^#/u, '')
+    // While the user has typed only `tag:` (or `tag:#`), show the same live
+    // set as `has:tag` instead of surfacing an error for an unfinished value.
+    if (!pattern &amp;&amp; !tagExact) {
+      return { kind: 'field', field: 'has', value: 'tag', raw: lexeme.raw, start: lexeme.start, end: lexeme.end }
+    }
+    // `tag:=` is incomplete while typing; malformed non-empty paths are
+    // still diagnosed by the validator below.
+    return { kind: 'field', field: 'tag', value: pattern, tagExact, raw: lexeme.raw, start: lexeme.start, end: lexeme.end }
+  }
+&nbsp;
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (field === 'literal') {
+    // An empty literal is an in-progress input, not an error worth surfacing.
+<span class="cstat-no" title="statement not covered" >    return { kind: 'literal', value: decodeValue(rawValue), raw: lexeme.raw, start: lexeme.start, end: lexeme.end }</span>
+  }
+&nbsp;
+  // Keep every known structured field quiet while the user has only typed the
+  // field name and colon. The evaluator returns no matches for this state; it
+  // must not fall back to ordinary full-text search or retain stale results.
+  if (!rawValue.trim()) {
+    return { kind: 'field', field, value: '', raw: lexeme.raw, start: lexeme.start, end: lexeme.end }
+  }
+&nbsp;
+  let fieldValue = decodeValue(rawValue)
+  let titleMode: TitleMatchMode | undefined
+  let matchMode: TextMatchMode = 'substring'
+  const trimmedRawValue = rawValue.trimStart()
+  const quotedValue = trimmedRawValue.startsWith('"')
+  if (!quotedValue) {
+    if (trimmedRawValue.startsWith('=')) { matchMode = 'exact'; fieldValue = decodeValue(trimmedRawValue.slice(1)) }
+    else if (trimmedRawValue.startsWith('^')) { matchMode = 'prefix'; fieldValue = decodeValue(trimmedRawValue.slice(1)) }
+    else if (trimmedRawValue.startsWith('~')) { matchMode = 'substring'; fieldValue = decodeValue(trimmedRawValue.slice(1)) }
+    else if (hasUnescapedWildcard(trimmedRawValue)) { matchMode = 'glob' }
+    if (field === 'title') titleMode = matchMode === 'glob' ? <span class="branch-0 cbranch-no" title="branch not covered" >'substring' : m</span>atchMode
+  }
+&nbsp;
+  let comparison: ComparisonOperator | undefined
+  if (['size', 'words', 'wordcount', 'tagcount', 'linkcount', 'backlinkcount', 'taskcount', 'created', 'modified'].includes(field)) {
+    const operatorMatch = /^(&gt;=|&lt;=|!=|~=|&gt;|&lt;|=)(.*)$/su.exec(fieldValue)
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (operatorMatch) {
+      comparison = operatorMatch[1] as ComparisonOperator
+      fieldValue = operatorMatch[2]
+      // `size:&gt;=` / `created:&gt;` are unfinished comparisons, so keep them
+      // non-matching and quiet until the user supplies a value.
+    }
+  }
+  return {
+    kind: 'field', field, value: fieldValue, comparison, titleMode, matchMode, rawValue,
+    raw: lexeme.raw, start: lexeme.start, end: lexeme.end,
+  }
+}
+&nbsp;
+class Parser {
+  private position = 0
+  constructor(
+    private readonly lexemes: Lexeme[],
+    private readonly diagnostics: QueryDiagnostic[],
+    private readonly aliases: QueryFieldAliases = {},
+  ) {}
+&nbsp;
+  parse(): QueryNode | null {
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (this.current().kind === 'eof') <span class="cstat-no" title="statement not covered" >return null</span>
+    const node = this.parseOr()
+    while (this.current().kind !== 'eof') {
+      const current = <span class="cstat-no" title="statement not covered" >this.current()</span>
+<span class="cstat-no" title="statement not covered" >      if (current.kind === 'rparen') {</span>
+<span class="cstat-no" title="statement not covered" >        this.diagnostics.push({ message: 'Unmatched closing parenthesis.', start: current.start, end: current.end, severity: 'error' })</span>
+<span class="cstat-no" title="statement not covered" >        this.advance()</span>
+      } else {
+<span class="cstat-no" title="statement not covered" >        this.diagnostics.push({ message: `Unexpected token "${current.raw}".`, start: current.start, end: current.end, severity: 'error' })</span>
+<span class="cstat-no" title="statement not covered" >        this.advance()</span>
+      }
+    }
+    return node
+  }
+&nbsp;
+  private parseOr(): QueryNode {
+    let left = this.parseXor()
+    while (this.current().kind === 'operator' &amp;&amp; ['OR', 'NOR'].includes(this.current().operator ?? <span class="branch-1 cbranch-no" title="branch not covered" >'')</span>) {
+      const op = this.advance()
+      const right = this.parseXorOrDiagnose(op)
+      left = this.binary(op, left, right)
+    }
+    return left
+  }
+&nbsp;
+  private parseXor(): QueryNode {
+    let left = this.parseAnd()
+    while (this.current().kind === 'operator' &amp;&amp; ['XOR', 'XNOR'].includes(this.current().operator ?? <span class="branch-1 cbranch-no" title="branch not covered" >'')</span>) {
+      const op = this.advance()
+      const right = this.parseAndOrDiagnose(op)
+      left = this.binary(op, left, right)
+    }
+    return left
+  }
+&nbsp;
+  private parseAnd(): QueryNode {
+    let left = this.parseUnary()
+    while (true) {
+      const current = this.current()
+      if (current.kind === 'operator' &amp;&amp; ['AND', 'NAND'].includes(current.operator ?? <span class="branch-1 cbranch-no" title="branch not covered" >'')</span>) {
+        const op = this.advance()
+        const right = this.parseUnaryOrDiagnose(op)
+        left = this.binary(op, left, right)
+        continue
+      }
+      if (left.kind === 'field' &amp;&amp; left.field === 'title' &amp;&amp; left.titleMode !== 'substring' &amp;&amp; current.kind === 'atom') {
+        const nextValue = current.value ?? <span class="branch-1 cbranch-no" title="branch not covered" >current.raw</span>
+        // Unquoted exact/prefix title values may contain spaces; stop before another field/tag/operator.
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (findOutsideQuotes(nextValue, ':') &lt; 0 &amp;&amp; !nextValue.startsWith('#') &amp;&amp; !nextValue.startsWith('-')) {
+          this.advance()
+          left = { ...left, value: `${left.value} ${decodeValue(nextValue)}`.trim(), raw: `${left.raw} ${current.raw}`, end: current.end }
+          continue
+        }
+      }
+      if (this.canStartPrimary(current)) {
+        const right = this.parseImplicitRight()
+        if (this.isFreeTextNode(left) &amp;&amp; this.isFreeTextNode(right)) {
+          // Adjacent ordinary words/phrases form one Banana text query;
+          // do not silently change its OR/tokenization/ranking behavior into
+          // a mandatory per-token conjunction inside mixed Boolean syntax.
+          left = this.mergeFreeText(left, right)
+        } else {
+          // Adjacent independent predicates imply AND.
+          left = {
+            kind: 'binary', operator: 'AND', left, right,
+            raw: `${left.raw} ${right.raw}`, start: left.start, end: right.end,
+          }
+        }
+        continue
+      }
+      break
+    }
+    return left
+  }
+&nbsp;
+  private parseUnary(): QueryNode {
+    const current = this.current()
+    if (current.kind === 'operator' &amp;&amp; current.operator === 'NOT') {
+      const op = this.advance()
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (!this.canStartPrimary(this.current())) {
+<span class="cstat-no" title="statement not covered" >        this.diagnostics.push({ message: 'NOT requires an expression.', start: op.start, end: op.end, severity: 'error' })</span>
+<span class="cstat-no" title="statement not covered" >        return { kind: 'not', child: { kind: 'text', value: '', raw: '', start: op.end, end: op.end }, raw: op.raw, start: op.start, end: op.end }</span>
+      }
+      const child = this.parseImplicitRight()
+      return { kind: 'not', child, raw: `${op.raw} ${child.raw}`, start: op.start, end: child.end }
+    }
+    const node = this.parsePrimary()
+    // Banana's legacy -term exclusion is preserved as unary negation when
+    // it appears as a standalone query atom; embedded hyphens are untouched.
+    if (node.kind === 'text' &amp;&amp; node.value.startsWith('-') &amp;&amp; node.value.length &gt; 1) {
+      const value = node.value.slice(1)
+      return {
+        kind: 'not', child: { ...node, value, raw: value },
+        raw: node.raw, start: node.start, end: node.end,
+      }
+    }
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (node.kind === 'field' &amp;&amp; node.field === 'tag' &amp;&amp; node.value.startsWith('-')) {
+      const pattern = <span class="cstat-no" title="statement not covered" >node.value.slice(1)</span>
+<span class="cstat-no" title="statement not covered" >      return { kind: 'not', child: { ...node, value: pattern }, raw: node.raw, start: node.start, end: node.end }</span>
+    }
+    return node
+  }
+&nbsp;
+  private parsePrimary(): QueryNode {
+    const current = this.current()
+    if (current.kind === 'lparen') {
+      const open = this.advance()
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (this.current().kind === 'rparen') {
+        const close = <span class="cstat-no" title="statement not covered" >this.advance()</span>
+<span class="cstat-no" title="statement not covered" >        this.diagnostics.push({ message: 'Empty parentheses are not a query expression.', start: open.start, end: close.end, severity: 'error' })</span>
+<span class="cstat-no" title="statement not covered" >        return { kind: 'text', value: '', raw: '()', start: open.start, end: close.end }</span>
+      }
+      const child = this.parseOr()
+      if (this.current().kind === 'rparen') {
+        const close = this.advance()
+        return { ...child, raw: this.lexemes.slice(this.positionAt(open), this.position).map(t =&gt; t.raw).join(' '), start: open.start, end: close.end }
+      }
+      this.diagnostics.push({ message: 'Unmatched opening parenthesis.', start: open.start, end: open.end, severity: 'error' })
+      return child
+    }
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (current.kind === 'operator') {
+      const wordOperator = <span class="cstat-no" title="statement not covered" >current.raw === current.operator &amp;&amp; current.operator !== 'NOT'</span>
+      const bad = <span class="cstat-no" title="statement not covered" >this.advance()</span>
+<span class="cstat-no" title="statement not covered" >      if (wordOperator) <span class="cstat-no" title="statement not covered" >return { kind: 'text', value: bad.raw, raw: bad.raw, start: bad.start, end: bad.end }</span></span>
+<span class="cstat-no" title="statement not covered" >      this.diagnostics.push({ message: `Unexpected operator "${bad.raw}".`, start: bad.start, end: bad.end, severity: 'error' })</span>
+<span class="cstat-no" title="statement not covered" >      return { kind: 'text', value: '', raw: bad.raw, start: bad.start, end: bad.end }</span>
+    }
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (current.kind === 'rparen' || current.kind === 'eof') {
+<span class="cstat-no" title="statement not covered" >      this.diagnostics.push({ message: 'Expected a query expression.', start: current.start, end: current.end, severity: 'error' })</span>
+<span class="cstat-no" title="statement not covered" >      return { kind: 'text', value: '', raw: '', start: current.start, end: current.end }</span>
+    }
+    this.advance()
+    if (current.kind === 'phrase') {
+      return { kind: 'phrase', value: current.value ?? <span class="branch-1 cbranch-no" title="branch not covered" >'', r</span>aw: current.raw, start: current.start, end: current.end }
+    }
+    const rawValue = current.value ?? <span class="branch-1 cbranch-no" title="branch not covered" >current.raw</span>
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (rawValue.startsWith('-"') &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >rawValue.endsWith('"')) {</span>
+      const quoted = <span class="cstat-no" title="statement not covered" >readQuoted(rawValue, 1)</span>
+      const child: PhraseNode = <span class="cstat-no" title="statement not covered" >{ kind: 'phrase', value: quoted.value, raw: rawValue.slice(1), start: current.start + 1, end: current.end }</span>
+<span class="cstat-no" title="statement not covered" >      return { kind: 'not', child, raw: current.raw, start: current.start, end: current.end }</span>
+    }
+    // Legacy exclusion can prefix a structured predicate too: -tag:#archived
+    // means NOT(actual tag predicate), not a text search for the syntax.
+    if (rawValue.startsWith('-') &amp;&amp; rawValue.length &gt; 1) {
+      const positiveRaw = rawValue.slice(1)
+      const positiveColon = findOutsideQuotes(positiveRaw, ':')
+      const positiveField = positiveColon &gt; 0 ? positiveRaw.slice(0, positiveColon).toLowerCase() : ''
+      if (isKnownFieldName(positiveField, this.aliases) || positiveField === 'literal') {
+        const child: QueryNode = positiveField === 'literal'
+          ? <span class="branch-0 cbranch-no" title="branch not covered" >{ kind: 'literal', value: decodeValue(positiveRaw.slice(positiveColon + 1)), raw: positiveRaw, start: current.start + 1, end: current.end }</span>
+          : parseFieldAtom({ ...current, raw: positiveRaw, value: positiveRaw, start: current.start + 1 }, this.diagnostics, this.aliases)!
+        return { kind: 'not', child, raw: current.raw, start: current.start, end: current.end }
+      }
+    }
+    const colon = findOutsideQuotes(rawValue, ':')
+    if (colon &gt; 0) {
+      const field = rawValue.slice(0, colon).toLowerCase()
+      if (field === 'literal') {
+        return { kind: 'literal', value: decodeValue(rawValue.slice(colon + 1)), raw: current.raw, start: current.start, end: current.end }
+      }
+      const fieldNode = parseFieldAtom(current, this.diagnostics, this.aliases)
+      if (fieldNode) return fieldNode
+    }
+    if (rawValue.startsWith('#') &amp;&amp; rawValue.length &gt; 1) {
+      const pattern = rawValue.slice(1)
+      return { kind: 'tag', pattern, bare: true, literalNeedle: rawValue, raw: current.raw, start: current.start, end: current.end }
+    }
+    if (/^[^\p{L}\p{N}]+$/u.test(rawValue) &amp;&amp; rawValue.length &gt; 0) {
+      // Bare punctuation is still a semantic/rendered-text search. Only the
+      // explicit literal: form opts into raw-source character matching.
+      return { kind: 'text', value: decodeValue(rawValue), raw: current.raw, start: current.start, end: current.end }
+    }
+    return { kind: 'text', value: decodeValue(rawValue), raw: current.raw, start: current.start, end: current.end }
+  }
+&nbsp;
+  private canStartPrimary(lexeme: Lexeme): boolean {
+    if (lexeme.kind === 'atom' || lexeme.kind === 'phrase' || lexeme.kind === 'lparen') return true
+    return lexeme.kind === 'operator' &amp;&amp; lexeme.operator === 'NOT'
+  }
+&nbsp;
+  private parseAndOrDiagnose(operator: Lexeme): QueryNode {
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!this.canStartPrimary(this.current())) {
+<span class="cstat-no" title="statement not covered" >      this.diagnostics.push({ message: `Operator ${operator.raw} requires a right operand.`, start: operator.start, end: operator.end, severity: 'error' })</span>
+<span class="cstat-no" title="statement not covered" >      return { kind: 'text', value: '', raw: '', start: operator.end, end: operator.end }</span>
+    }
+    return this.parseAnd()
+  }
+&nbsp;
+  private parseXorOrDiagnose(operator: Lexeme): QueryNode {
+    if (!this.canStartPrimary(this.current())) {
+      this.diagnostics.push({ message: `Operator ${operator.raw} requires a right operand.`, start: operator.start, end: operator.end, severity: 'error' })
+      return { kind: 'text', value: '', raw: '', start: operator.end, end: operator.end }
+    }
+    return this.parseXor()
+  }
+&nbsp;
+  private parseUnaryOrDiagnose(operator: Lexeme): QueryNode {
+    if (!this.canStartPrimary(this.current())) {
+      this.diagnostics.push({ message: `Operator ${operator.raw} requires a right operand.`, start: operator.start, end: operator.end, severity: 'error' })
+      return { kind: 'text', value: '', raw: '', start: operator.end, end: operator.end }
+    }
+    return this.parseImplicitRight()
+  }
+&nbsp;
+  private parseImplicitRight(): QueryNode {
+    if (!this.isFreeTextLexeme(this.current())) return this.parseUnary()
+    let node = this.parseUnary()
+    while (this.isFreeTextLexeme(this.current())) {
+      const next = this.parseUnary()
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (!this.isFreeTextNode(node) || !this.isFreeTextNode(next)) <span class="cstat-no" title="statement not covered" >break</span>
+      node = this.mergeFreeText(node, next)
+    }
+    return node
+  }
+&nbsp;
+  private isFreeTextLexeme(lexeme: Lexeme): boolean {
+    if (lexeme.kind === 'phrase') return true
+    if (lexeme.kind !== 'atom') return false
+    const value = lexeme.value ?? <span class="branch-1 cbranch-no" title="branch not covered" >lexeme.raw</span>
+    if (!value || value.startsWith('#') || value.startsWith('-')) return false
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!/[\p{L}\p{N}]/u.test(value)) <span class="cstat-no" title="statement not covered" >return false</span>
+    const colon = findOutsideQuotes(value, ':')
+    if (colon &gt; 0 &amp;&amp; /^[a-z][a-z0-9-]*$/iu.test(value.slice(0, colon))) {
+      // URL schemes remain ordinary text; other field-like prefixes are
+      // reserved and validated instead of being swallowed by text grouping.
+      return /^[a-z][a-z0-9+.-]*:\/\//iu.test(value) &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >!isKnownFieldName(value.slice(0, colon).toLowerCase(), this.aliases)</span>
+    }
+    return true
+  }
+&nbsp;
+  private isFreeTextNode(node: QueryNode): node is TextNode | PhraseNode | TextQueryNode {
+    return node.kind === 'text' || node.kind === 'phrase' || node.kind === 'textQuery'
+  }
+&nbsp;
+  private mergeFreeText(left: TextNode | PhraseNode | TextQueryNode, right: TextNode | PhraseNode | TextQueryNode): TextQueryNode {
+    const phrases = [
+      ...(left.kind === 'phrase' ? <span class="branch-0 cbranch-no" title="branch not covered" >[left.value] : l</span>eft.kind === 'textQuery' ? left.phraseValues : []),
+      ...(right.kind === 'phrase' ? [right.value] : right.kind === 'textQuery' ? right.phraseValues : []),
+    ]
+    const query = `${left.raw} ${right.raw}`.trim()
+    return { kind: 'textQuery', query, phraseValues: phrases, raw: query, start: left.start, end: right.end }
+  }
+&nbsp;
+  private binary(operator: Lexeme, left: QueryNode, right: QueryNode): BinaryNode {
+    return {
+      kind: 'binary', operator: operator.operator as BooleanOperator, left, right,
+      raw: `${left.raw} ${operator.raw} ${right.raw}`, start: left.start, end: right.end,
+    }
+  }
+&nbsp;
+  private current(): Lexeme { return this.lexemes[this.position] ?? <span class="branch-1 cbranch-no" title="branch not covered" >this.lexemes[this.lexemes.length - 1] }</span>
+  private advance(): Lexeme { const token = this.current(); <span class="missing-if-branch" title="else path not taken" >E</span>if (token.kind !== 'eof') this.position++; return token }
+  private get positionAt(): (lexeme: Lexeme) =&gt; number {
+    return (lexeme: Lexeme) =&gt; this.lexemes.indexOf(lexeme)
+  }
+}
+&nbsp;
+/** Parse a complete query and return syntax errors without throwing. */
+export function parseQueryLanguage(
+  source: string,
+  options: { fieldAliases?: QueryFieldAliases } = {},
+): ParsedQueryLanguage {
+  const diagnostics: QueryDiagnostic[] = []
+  const lexemes = lex(source, diagnostics)
+  let root: QueryNode | null = null
+  let nesting = 0
+  let excessiveNesting = false
+  for (const lexeme of lexemes) {
+    if (lexeme.kind === 'lparen') nesting++
+    if (lexeme.kind === 'rparen') nesting = Math.max(0, nesting - 1)
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (nesting &gt; 64) <span class="cstat-no" title="statement not covered" >excessiveNesting = true</span>
+  }
+  try {
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (lexemes.length &gt; 513) {
+<span class="cstat-no" title="statement not covered" >      diagnostics.push({ message: 'Query is too complex (maximum 512 tokens).', start: 0, end: source.length, severity: 'error' })</span>
+    } else <span class="missing-if-branch" title="if path not taken" >I</span>if (excessiveNesting) {
+<span class="cstat-no" title="statement not covered" >      diagnostics.push({ message: 'Query nesting exceeds the limit of 64 levels.', start: 0, end: source.length, severity: 'error' })</span>
+    } else {
+      root = new Parser(lexemes, diagnostics, options.fieldAliases ?? {}).parse()
+    }
+  } catch (error: unknown) {
+<span class="cstat-no" title="statement not covered" >    diagnostics.push({</span>
+      message: `Could not parse query: ${error instanceof Error ? error.message : 'unexpected parser error'}`,
+      start: 0, end: source.length, severity: 'error',
+    })
+  }
+  const validateNode = (node: QueryNode | null): void =&gt; {
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!node) <span class="cstat-no" title="statement not covered" >return</span>
+    if (node.kind === 'tag') {
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (node.pattern &amp;&amp; !compileTagPattern(node.pattern)) <span class="cstat-no" title="statement not covered" >diagnostics.push({ message: `Invalid tag pattern "${node.pattern}"; tag segments cannot be empty.`, start: node.start, end: node.end, severity: 'error' })</span>
+    } else if (node.kind === 'field') {
+      if (node.field === 'tag' &amp;&amp; node.value &amp;&amp; !compileTagPattern(node.value, { exact: node.tagExact })) diagnostics.push({ message: `Invalid tag pattern "${node.value}"; tag segments cannot be empty.`, start: node.start, end: node.end, severity: 'error' })
+      const knownEnumValues = (node: FieldNode, supportedValues: readonly string[]): boolean =&gt; {
+        const rawValue = node.raw.slice(node.raw.indexOf(':') + 1).trimStart()
+        const mode = rawValue.startsWith('=') ? 'exact'
+          : rawValue.startsWith('^') ? 'prefix'
+          : rawValue.startsWith('~') ? 'substring'
+          : hasUnescapedWildcard(rawValue) ? 'glob' : 'progressive'
+        const valueParts = normalizeQueryValue(node.value).split(/\s+/u).filter(Boolean)
+        const rawPattern = rawValue.replace(/^[=^~]/u, '')
+        const rawParts = rawPattern.split(/\s+/u).filter(Boolean)
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!valueParts.length) <span class="cstat-no" title="statement not covered" >return false</span>
+        return valueParts.every((part, index) =&gt; supportedValues.some(supported =&gt; {
+          const candidate = normalizeQueryValue(supported)
+          if (mode === 'exact') return candidate === part
+          if (mode === 'prefix' || mode === 'progressive') return candidate.startsWith(part)
+          if (mode === 'substring') return candidate.includes(part)
+          // Use the corresponding raw token, so `\*` stays literal even if
+          // a neighbouring token contains an active wildcard.
+          return globPatternMatches(candidate, rawParts[index] ?? <span class="branch-1 cbranch-no" title="branch not covered" >part, n</span>ormalizeQueryValue)
+        }))
+      }
+      if (node.field === 'format' &amp;&amp; node.value.trim() &amp;&amp; !knownEnumValues(node, ['markdown', 'pdf', 'office', 'image', 'canvas', 'text', 'other'])) diagnostics.push({ message: `Unsupported format "${node.value}". Supported values: markdown, pdf, office, image, canvas, text, other.`, start: node.start, end: node.end, severity: 'error' })
+      if (node.field === 'type' &amp;&amp; node.value.trim() &amp;&amp; !knownEnumValues(node, ['note', 'document', 'image', 'canvas', 'other'])) diagnostics.push({ message: `Unsupported type "${node.value}". Supported values: note, document, image, canvas, other.`, start: node.start, end: node.end, severity: 'error' })
+      if (node.field === 'has' &amp;&amp; node.value.trim() &amp;&amp; !knownEnumValues(node, ['tags', 'tag', 'aliases', 'alias', 'frontmatter', 'properties', 'headings', 'heading', 'tasks', 'task', 'links', 'link', 'embeds', 'embed', 'content'])) diagnostics.push({ message: `Unsupported has: predicate "${node.value}".`, start: node.start, end: node.end, severity: 'error' })
+      if (node.field === 'is' &amp;&amp; node.value.trim() &amp;&amp; !knownEnumValues(node, ['empty', 'orphan', 'tagged', 'untagged', 'todo', 'done', 'note', 'attachment', 'linked', 'unlinked'])) diagnostics.push({ message: `Unsupported is: predicate "${node.value}".`, start: node.start, end: node.end, severity: 'error' })
+      if (['empty', 'orphan'].includes(node.field) &amp;&amp; node.value.trim() &amp;&amp; !knownEnumValues(node, ['true', 'false'])) diagnostics.push({ message: `${node.field}: accepts true or false (prefixes are allowed while typing).`, start: node.start, end: node.end, severity: 'error' })
+      if (['task-todo', 'task-done'].includes(node.field) &amp;&amp; node.value.trim()) {
+        const rawValue = node.raw.slice(node.raw.indexOf(':') + 1).trimStart()
+        const mode: TextMatchMode = rawValue.startsWith('=') ? 'exact'
+          : rawValue.startsWith('^') ? <span class="branch-0 cbranch-no" title="branch not covered" >'prefix'</span>
+          : rawValue.startsWith('~') ? <span class="branch-0 cbranch-no" title="branch not covered" >'substring'</span>
+          : hasUnescapedWildcard(rawValue) ? <span class="branch-0 cbranch-no" title="branch not covered" >'glob' : '</span>prefix'
+        const typed = normalizeQueryValue(node.value)
+        const supported = ['true', 'false'].some(candidate =&gt; {
+          if (mode === 'exact') return candidate === typed
+          <span class="missing-if-branch" title="else path not taken" >E</span>if (mode === 'prefix') return candidate.startsWith(typed)
+<span class="cstat-no" title="statement not covered" >          if (mode === 'substring') <span class="cstat-no" title="statement not covered" >return candidate.includes(typed)</span></span>
+<span class="cstat-no" title="statement not covered" >          return globPatternMatches(candidate, typed, normalizeQueryValue)</span>
+        })
+        if (!supported) diagnostics.push({ message: `${node.field}: accepts true or false (prefixes are allowed while typing).`, start: node.start, end: node.end, severity: 'error' })
+      }
+    } else if (node.kind === 'binary') {
+      validateNode(node.left); validateNode(node.right)
+    } else if (node.kind === 'not') validateNode(node.child)
+  }
+  validateNode(root)
+  const hasPunctuationOnly = lexemes.some(token =&gt; (token.kind === 'atom' || token.kind === 'phrase') &amp;&amp; !!token.value &amp;&amp; !/[\p{L}\p{N}]/u.test(token.kind === 'phrase' ? token.value : token.value))
+&nbsp;
+  const hasStructuredField = lexemes.some(token =&gt; {
+    if (token.kind !== 'atom') return false
+    const value = token.value ?? <span class="branch-1 cbranch-no" title="branch not covered" >token.raw</span>
+    const fieldProbe = value.startsWith('-') ? value.slice(1) : value
+    const colon = findOutsideQuotes(fieldProbe, ':')
+    if (colon &lt;= 0 || !/^[a-z][a-z0-9-]*$/iu.test(fieldProbe.slice(0, colon))) return false
+    // A URL scheme and a Windows drive letter are not structured query fields.
+    return !(/^[a-z][a-z0-9+.-]*:\/\//iu.test(fieldProbe) || /^[a-z]:[\\/]/iu.test(fieldProbe))
+  })
+  const hasBoolOperator = lexemes.some(token =&gt; token.kind === 'operator')
+  const hasBareTag = lexemes.some(token =&gt; token.kind === 'atom' &amp;&amp; (token.value ?? <span class="branch-1 cbranch-no" title="branch not covered" >'')</span>.startsWith('#'))
+  const hasGrouping = lexemes.some(token =&gt; token.kind === 'lparen' || token.kind === 'rparen')
+  const hasPunctuationOnlyText = root?.kind === 'literal' || hasPunctuationOnly
+  const isAdvanced = hasStructuredField || hasBoolOperator || hasBareTag || hasGrouping || diagnostics.length &gt; 0 || hasPunctuationOnlyText
+  return { source, root, diagnostics, isAdvanced }
+}
+&nbsp;
+export function applyBooleanOperator(operator: BooleanOperator, left: boolean, right: boolean): boolean {
+  switch (operator) {
+    case 'AND': return left &amp;&amp; right
+    case 'OR': return left || right
+    case 'XOR': return left !== right
+    case 'NAND': return !(left &amp;&amp; right)
+    case 'NOR': return !(left || right)
+    case 'XNOR': return left === right
+  }
+}
+&nbsp;
+export interface MatchProvenance {
+  semantic: boolean
+  literal: boolean
+}
+&nbsp;
+export interface ProvenanceEvaluation {
+  matched: boolean
+  provenance: MatchProvenance
+}
+&nbsp;
+/** Truth-table and provenance rules used when composing matched AST leaves. */
+export function combineMatchProvenance(
+  operator: BooleanOperator,
+  left: MatchProvenance | null,
+  right: MatchProvenance | null
+): ProvenanceEvaluation {
+  const leftMatches = left !== null
+  const rightMatches = right !== null
+  const matched = applyBooleanOperator(operator, leftMatches, rightMatches)
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (!matched) <span class="cstat-no" title="statement not covered" >return { matched: false, provenance: { semantic: false, literal: false } }</span>
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (operator === 'NAND' || operator === 'NOR') {
+<span class="cstat-no" title="statement not covered" >    return { matched: true, provenance: { semantic: true, literal: false } }</span>
+  }
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (operator === 'XNOR' &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >!leftMatches &amp;&amp; <span class="branch-2 cbranch-no" title="branch not covered" >!</span>rightMatches) {</span>
+<span class="cstat-no" title="statement not covered" >    return { matched: true, provenance: { semantic: true, literal: false } }</span>
+  }
+  if (operator === 'XOR') {
+    const winner = leftMatches ? left : <span class="branch-1 cbranch-no" title="branch not covered" >right</span>
+    return { matched: true, provenance: { semantic: winner?.semantic ?? <span class="branch-1 cbranch-no" title="branch not covered" >false, l</span>iteral: winner?.literal ?? <span class="branch-1 cbranch-no" title="branch not covered" >false }</span> }
+  }
+  if (operator === 'AND') {
+    return { matched: true, provenance: { semantic: !!left?.semantic || !!right?.semantic, literal: !!left?.literal || <span class="branch-1 cbranch-no" title="branch not covered" >!!right?.literal }</span> }
+  }
+  return { matched: true, provenance: { semantic: !!left?.semantic || !!right?.semantic, literal: !!left?.literal || !!right?.literal } }
+}
+&nbsp;
+export interface CompiledTagPattern {
+  readonly original: string
+  readonly exact: boolean
+  readonly singleSegmentPrefix: boolean
+  readonly segments: ReadonlyArray&lt;{ globstar: boolean; matcher?: RegExp; prefixMatcher?: RegExp }&gt;
+}
+&nbsp;
+const tagPatternCache = new Map&lt;string, CompiledTagPattern | null&gt;()
+const MAX_TAG_PATTERN_CACHE = 256
+&nbsp;
+function escapeRegex(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&amp;')
+}
+&nbsp;
+/**
+ * Compile a tag path matcher. Wildcards never cross `/`: `*` and `?` stay in
+ * one segment, while `**` is special only as an entire segment. In progressive
+ * mode, literal segments are prefixes; an unqualified one-segment pattern also
+ * includes descendant tags. `exact` anchors the complete tag path.
+ */
+export function compileTagPattern(pattern: string, options: { exact?: boolean } = {}): CompiledTagPattern | null {
+  const normalized = pattern.replace(/^#/u, '')
+  const exact = options.exact ?? false
+  const cacheKey = `${exact ? 'exact' : 'progressive'}:${normalized}`
+  if (tagPatternCache.has(cacheKey)) return tagPatternCache.get(cacheKey) ?? <span class="branch-1 cbranch-no" title="branch not covered" >null</span>
+  const parts = normalized.split('/')
+  if (!normalized.length || parts.length &gt; 64 || parts.some(part =&gt; !part.length)) {
+    tagPatternCache.set(cacheKey, null)
+    return null
+  }
+  const segments: Array&lt;{ globstar: boolean; matcher?: RegExp; prefixMatcher?: RegExp }&gt; = []
+  for (const [partIndex, part] of parts.entries()) {
+    if (part === '**') {
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (!segments[segments.length - 1]?.globstar) segments.push({ globstar: true })
+      continue
+    }
+    let source = ''
+    let hasWildcard = false
+    for (let index = 0; index &lt; part.length; index++) {
+      const char = part[index]
+      if (char === '\\' &amp;&amp; index + 1 &lt; part.length &amp;&amp; ['*', '?', '\\'].includes(part[index + 1])) {
+        source += escapeRegex(part[index + 1])
+        index++
+      } else if (char === '*') {
+        hasWildcard = true
+        while (part[index + 1] === '*') <span class="cstat-no" title="statement not covered" >index++</span>
+        source += '[^/]*'
+      } else <span class="missing-if-branch" title="if path not taken" >I</span>if (char === '?') {
+<span class="cstat-no" title="statement not covered" >        hasWildcard = true</span>
+<span class="cstat-no" title="statement not covered" >        source += '[^/]'</span>
+      } else {
+        source += escapeRegex(char)
+      }
+    }
+    // A literal root followed by an explicit descendant wildcard names a
+    // complete hierarchy root (`B/**`), not every root whose name starts B
+    // (`BB`). Progressive prefixes still apply to later segments, including
+    // `*/B/**`, where the agreed segment-prefix semantics allow `C/BB`.
+    const explicitRootDescendants = partIndex === 0 &amp;&amp; parts.slice(1).includes('**') &amp;&amp; !hasWildcard
+    segments.push({
+      globstar: false,
+      matcher: new RegExp(`^${source}$`, 'iu'),
+      prefixMatcher: !exact &amp;&amp; !hasWildcard &amp;&amp; !explicitRootDescendants ? new RegExp(`^${source}`, 'iu') : undefined,
+    })
+  }
+  const compiled: CompiledTagPattern = {
+    original: pattern,
+    exact,
+    singleSegmentPrefix: !exact &amp;&amp; !normalized.includes('/') &amp;&amp; !parts.includes('**'),
+    segments,
+  }
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (tagPatternCache.size &gt;= MAX_TAG_PATTERN_CACHE) <span class="cstat-no" title="statement not covered" >tagPatternCache.clear()</span>
+  tagPatternCache.set(cacheKey, compiled)
+  return compiled
+}
+&nbsp;
+export function matchTagPattern(compiled: CompiledTagPattern, tagPath: string): boolean {
+  const tagSegments = tagPath.replace(/^#/u, '').split('/')
+  const visit = (patternIndex: number, tagIndex: number): boolean =&gt; {
+    if (patternIndex === compiled.segments.length) {
+      if (compiled.exact) return tagIndex === tagSegments.length
+      if (compiled.singleSegmentPrefix) return tagIndex &lt;= tagSegments.length
+      return tagIndex === tagSegments.length
+    }
+    const segment = compiled.segments[patternIndex]
+    if (segment.globstar) {
+      for (let offset = tagIndex; offset &lt;= tagSegments.length; offset++) {
+        if (visit(patternIndex + 1, offset)) return true
+      }
+      return false
+    }
+    if (tagIndex &gt;= tagSegments.length) return false
+    const tagSegment = tagSegments[tagIndex]
+    const matches = segment.matcher?.test(tagSegment) || segment.prefixMatcher?.test(tagSegment)
+    return !!matches &amp;&amp; visit(patternIndex + 1, tagIndex + 1)
+  }
+  return visit(0, 0)
+}
+&nbsp;
+/** Unicode normalization shared by fields, tags, and literal text matching. */
+export function normalizeQueryValue(value: string): string {
+  return value.normalize('NFKC').replace(/\s+/gu, ' ').trim().toLocaleLowerCase()
+}
+&nbsp;
+/** Prefix matching used by enum-like fields while their value is being typed. */
+export function matchesProgressiveEnumValue(candidate: string, typedValue: string): boolean {
+  const typed = normalizeQueryValue(typedValue)
+  return typed.length &gt; 0 &amp;&amp; normalizeQueryValue(candidate).startsWith(typed)
+}
+&nbsp;
+/** Prefer an exact property key, otherwise resolve a typed prefix to candidate keys. */
+export function resolvePropertyNameCandidates(names: readonly string[], requestedName: string): string[] {
+  const normalized = normalizeQueryValue(requestedName)
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (!normalized) <span class="cstat-no" title="statement not covered" >return []</span>
+  const exact = names.find(name =&gt; normalizeQueryValue(name) === normalized)
+  return exact ? [exact] : names.filter(name =&gt; normalizeQueryValue(name).startsWith(normalized))
+}
+&nbsp;
+/** Unquoted string property equality is prefix-aware for live, incremental typing. */
+export function matchesProgressivePropertyString(actual: string, expected: string, rawValue: string): boolean {
+  const raw = rawValue.trim()
+  const containsGlob = hasUnescapedWildcard(raw)
+  if (!raw || raw.startsWith('"') || containsGlob || raw.startsWith('^') || raw.startsWith('~')) return false
+  return normalizeQueryValue(actual).startsWith(normalizeQueryValue(expected))
+}
+&nbsp;
+/** Match string-valued property comparisons, preserving progressive typing by default. */
+export function matchesPropertyString(actual: string, expected: string, rawValue: string): boolean {
+  const raw = rawValue.trim()
+  if (!raw || raw.startsWith('"')) return false
+  const candidate = normalizeQueryValue(actual)
+  if (raw.startsWith('^')) return candidate.startsWith(normalizeQueryValue(expected.slice(1)))
+  if (raw.startsWith('~')) return candidate.includes(normalizeQueryValue(expected.slice(1)))
+  <span class="missing-if-branch" title="else path not taken" >E</span>if (hasUnescapedWildcard(raw)) return globPatternMatches(actual, raw, normalizeQueryValue)
+<span class="cstat-no" title="statement not covered" >  return candidate.startsWith(normalizeQueryValue(expected))</span>
+}
+&nbsp;
+export function compareTypedValues(actual: unknown, expected: unknown, operator: ComparisonOperator): boolean {
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (actual === undefined) <span class="cstat-no" title="statement not covered" >return false</span>
+  const left = scalarComparable(actual)
+  const right = scalarComparable(expected)
+  if (operator === '~=') {
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (typeof left === 'string' &amp;&amp; typeof right === 'string') {
+      return normalizeQueryValue(left).includes(normalizeQueryValue(right))
+    }
+<span class="cstat-no" title="statement not covered" >    return String(left).toLocaleLowerCase().includes(String(right).toLocaleLowerCase())</span>
+  }
+  if (operator === '=' || operator === '!=') {
+    // String equality is normalized and case-insensitive like the other text
+    // fields. Numeric, boolean, and null comparisons remain type-strict; do not
+    // make a frontmatter number match merely because its text representation
+    // happens to look the same.
+    const equal = typeof left === 'string' &amp;&amp; typeof right === 'string'
+      ? normalizeQueryValue(left) === normalizeQueryValue(right)
+      : typeof left === typeof right &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >left === right</span>
+    return operator === '=' ? equal : !equal
+  }
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (left === null || right === null) <span class="cstat-no" title="statement not covered" >return false</span>
+  if (typeof left === 'number' &amp;&amp; typeof right === 'number') {
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (operator === '&gt;') return left &gt; right
+<span class="cstat-no" title="statement not covered" >    if (operator === '&gt;=') <span class="cstat-no" title="statement not covered" >return left &gt;= right</span></span>
+<span class="cstat-no" title="statement not covered" >    if (operator === '&lt;') <span class="cstat-no" title="statement not covered" >return left &lt; right</span></span>
+<span class="cstat-no" title="statement not covered" >    return left &lt;= right</span>
+  }
+  // Lexicographic ordering is only defined for strings; booleans and mixed
+  // types do not acquire an accidental ordering through String(...) coercion.
+  if (typeof left !== 'string' || typeof right !== 'string') return false
+  const normalizedLeft = normalizeQueryValue(left)
+  const normalizedRight = normalizeQueryValue(right)
+  <span class="missing-if-branch" title="else path not taken" >E</span>if (operator === '&gt;') return normalizedLeft &gt; normalizedRight
+<span class="cstat-no" title="statement not covered" >  if (operator === '&gt;=') <span class="cstat-no" title="statement not covered" >return normalizedLeft &gt;= normalizedRight</span></span>
+<span class="cstat-no" title="statement not covered" >  if (operator === '&lt;') <span class="cstat-no" title="statement not covered" >return normalizedLeft &lt; normalizedRight</span></span>
+<span class="cstat-no" title="statement not covered" >  return normalizedLeft &lt;= normalizedRight</span>
+}
+&nbsp;
+function scalarComparable(value: unknown): unknown {
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (value instanceof Date) <span class="cstat-no" title="statement not covered" >return value.getTime()</span>
+  if (typeof value === 'string') {
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (/^\d{4}-\d{2}-\d{2}(?:$|T)/u.test(value) &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >!Number.isNaN(Date.parse(value))) <span class="cstat-no" title="statement not covered" >r</span>eturn new Date(value).getTime()</span>
+    return value.normalize('NFKC').trim()
+  }
+  return value
+}
+&nbsp;
+export function <span class="fstat-no" title="function not covered" >isQueryNodeLeaf(n</span>ode: QueryNode): node is TextNode | TextQueryNode | PhraseNode | LiteralNode | FieldNode | PropertyNode | TagNode {
+<span class="cstat-no" title="statement not covered" >  return node.kind !== 'binary' &amp;&amp; node.kind !== 'not'</span>
+}
+&nbsp;</pre></td></tr></table></pre>
+
+                <div class='push'></div><!-- for sticky footer -->
+            </div><!-- /wrapper -->
+            <div class='footer quiet pad2 space-top1 center small'>
+                Code coverage generated by
+                <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+                at 2026-10-16T20:23:51.127Z
+            </div>
+        <script src="../../prettify.js"></script>
+        <script>
+            window.onload = function () {
+                prettyPrint();
+            };
+        </script>
+        <script src="../../sorter.js"></script>
+        <script src="../../block-navigation.js"></script>
+    </body>
+</html>
+    
