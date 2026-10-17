@@ -4,7 +4,7 @@
 [![Latest release](https://img.shields.io/github/v/release/Neomoorea/obsidian-banana)](https://github.com/Neomoorea/obsidian-banana/releases/latest)
 ![Obsidian 1.13.3+](https://img.shields.io/badge/obsidian-1.13.3%2B-7c3aed?style=flat-square)
 
-![Banana is Omnisearch on Steroids](banners/Banana_Omnisearch_on Steroids.jpg)
+![Banana is Omnisearch on Steroids](banners/Banana_Omnisearch_on_Steroids.jpg)
 
 Banana is a fork of [Omnisearch](https://github.com/scambier/obsidian-omnisearch), the acclaimed search plugin for Obsidian. It keeps the familiar MiniSearch-powered ranked search and adds a composable query language, Boolean logic, structured metadata and file filters, hierarchical tag-pattern matching, rendered-Markdown matching, explicit match provenance, and source-aware navigation; among other goodies.
 
