@@ -33,6 +33,8 @@ import {
   resolvePropertyNameCandidates,
   matchesPropertyString,
   matchesProgressiveEnumValue,
+  parseByteSize,
+  parseDate,
   type BooleanOperator,
   type FieldNode,
   type PropertyNode,
@@ -717,7 +719,7 @@ export class SearchEngine {
       const mode = node.matchMode ?? 'substring'
       for (const sourceContext of await getAllContexts()) {
         const context = withoutQuerySyntax(sourceContext, node.raw)
-        const findings = findScopedTextMatches(context.content, node.value, kind, mode, value => this.normalizeIndexCharacter(value), node.rawValue ?? node.value)
+        const findings = findScopedTextMatches(context.content, node.value, kind, mode, value => this.normalizeIndexCharacter(value), node.globPattern)
         if (!findings.length) continue
         const scopes = findings.map(finding => finding.scope)
         const sourceMatches = findings.map(finding => finding.sourceMatch).filter((match): match is SearchMatch => !!match)
@@ -1157,14 +1159,16 @@ export class SearchEngine {
     const wordCount = (content.match(/\S+/gu) ?? []).length
     const emptyBody = context.normalizedRenderedContent.text.trim().length === 0
     const isOrphan = backlinkCount === 0
-    const matchesText = (candidate: string): boolean => matchStructuredText(candidate, value, node.matchMode ?? (node.titleMode ?? 'substring'), node.rawValue)
+    const matchesText = (candidate: string): boolean => matchStructuredText(candidate, value, node.matchMode ?? (node.titleMode ?? 'substring'), node.globPattern)
     const rawFieldValue = (node.rawValue ?? node.raw.slice(node.raw.indexOf(':') + 1)).trimStart()
     const rawFieldTokens = rawFieldValue.replace(/^[=^~]/u, '').split(/\s+/u).filter(Boolean)
     const matchesEnum = (candidate: string, typedPart: string, rawPattern?: string): boolean => {
       const rawValue = rawPattern ?? rawFieldValue
       const mode = node.matchMode ?? 'substring'
-      if (mode === 'exact' || mode === 'prefix' || mode === 'glob') return matchStructuredText(candidate, typedPart, mode, rawValue)
-      if (rawValue.startsWith('~') || rawFieldValue.startsWith('~')) return matchStructuredText(candidate, typedPart, 'substring')
+      // Only a value the parser found to be an unquoted wildcard is a glob; the modifier decides the anchoring.
+      const glob = node.globPattern === undefined ? undefined : rawValue.replace(/^[=^~]/u, '').trim()
+      if (mode === 'exact' || mode === 'prefix' || mode === 'glob') return matchStructuredText(candidate, typedPart, mode, glob)
+      if (glob !== undefined || rawValue.startsWith('~') || rawFieldValue.startsWith('~')) return matchStructuredText(candidate, typedPart, 'substring', glob)
       return matchesProgressiveEnumValue(candidate, typedPart)
     }
     const matchesEnumAlternatives = (candidate: string): boolean => value.split(/\s+/u).filter(Boolean)
@@ -1186,7 +1190,7 @@ export class SearchEngine {
       return compareTypedValues(actual, parsed, node.comparison ?? '=')
     }
     switch (node.field) {
-      case 'title': return matchStructuredText(context.title, value, node.matchMode ?? node.titleMode ?? 'substring', node.rawValue)
+      case 'title': return matchStructuredText(context.title, value, node.matchMode ?? node.titleMode ?? 'substring', node.globPattern)
       case 'file': {
         if ((node.matchMode ?? 'substring') === 'exact' && !/[./\\]/u.test(value)) {
           // Keep `file:md` as a filename substring search, but make the explicit
@@ -1581,18 +1585,4 @@ interface QueryDocumentContext {
   mtime: number
 }
 
-function parseByteSize(value: string): number | undefined {
-  const match = /^\s*(\d+(?:\.\d+)?)\s*(B|KB|KIB|MB|MIB|GB|GIB)?\s*$/iu.exec(value)
-  if (!match) return undefined
-  const amount = Number(match[1])
-  const unit = (match[2] ?? 'B').toLocaleUpperCase()
-  const power = unit.startsWith('G') ? 3 : unit.startsWith('M') ? 2 : unit.startsWith('K') ? 1 : 0
-  return amount * Math.pow(1024, power)
-}
-
-function parseDate(value: string): number | undefined {
-  if (!value.trim()) return undefined
-  const timestamp = Date.parse(value)
-  return Number.isNaN(timestamp) ? undefined : timestamp
-}
 

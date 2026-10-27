@@ -53,6 +53,12 @@ export interface FieldNode extends BaseNode {
   matchMode?: TextMatchMode
   /** Original value spelling, retained so escaped glob tokens remain literal. */
   rawValue?: string
+  /**
+   * The raw wildcard pattern (modifier removed, escapes intact) when the value is
+   * unquoted and has an active `*` or `?`. The match mode then decides only where
+   * the pattern is anchored: `=` the whole value, `^` its start, `~` anywhere.
+   */
+  globPattern?: string
   /** Tag paths normally use progressive prefix semantics; `=` requests an exact path. */
   tagExact?: boolean
 }
@@ -208,6 +214,48 @@ export const FIELD_REGISTRY: Readonly<Record<string, FieldRegistryEntry>> = {
 
 const FIELD_NAMES = new Set(Object.keys(FIELD_REGISTRY).filter(field => field !== 'literal'))
 
+/**
+ * Text fields whose unquoted `=` and `^` values may span spaces, so that
+ * `title:=AI Roadmap` means `title:="AI Roadmap"`. These hold natural-language
+ * text. Fields that hold names or paths (`path:^Projects/ meeting` is a path prefix
+ * followed by a search for `meeting`), enum, numeric, boolean and tag fields keep
+ * single-word values. Quote a value to end it early.
+ */
+const MULTIWORD_FIELDS: ReadonlySet<string> = new Set([
+  'title', 'alias', 'heading', 'section', 'block', 'line', 'task', 'contains',
+])
+
+/**
+ * Default start-of-word patterns that are ordinary text although they look like
+ * `word:`: any URL scheme and any Windows drive path. In a pattern `*` stands for
+ * scheme-like characters (letters, digits, `+`, `.`, `-`) and `?` for one letter,
+ * so `*://` cannot swallow the colon of a field prefix such as `title:https://`.
+ */
+export const DEFAULT_LITERAL_PREFIXES: readonly string[] = ['*://', '?:\\', '?:/']
+
+export interface QueryLanguageOptions {
+  /** User aliases from short names to built-in fields. */
+  fieldAliases?: QueryFieldAliases
+  /** Start-of-word patterns exempt from field parsing; see DEFAULT_LITERAL_PREFIXES. */
+  literalPrefixes?: readonly string[]
+}
+
+function compileLiteralPrefixes(entries: readonly string[]): RegExp[] {
+  const compiled: RegExp[] = []
+  for (const entry of entries) {
+    const pattern = entry.trim()
+    if (!pattern) continue
+    const source = [...pattern]
+      .map(char => char === '*' ? '[a-z0-9+.-]*' : char === '?' ? '[a-z]' : char.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&'))
+      .join('')
+    compiled.push(new RegExp(`^${source}`, 'iu'))
+  }
+  return compiled
+}
+
+const isLiteralPrefixed = (value: string, exemptions: readonly RegExp[]): boolean =>
+  exemptions.some(pattern => pattern.test(value))
+
 export type QueryFieldAliases = Readonly<Record<string, string>>
 
 function canonicalFieldName(field: string, aliases: QueryFieldAliases = {}): string {
@@ -236,6 +284,9 @@ const SYMBOL_OPERATORS: ReadonlyArray<readonly [string, string]> = [
   ['^', 'XOR'],
 ]
 
+/** Characters a backslash can escape. Keep `decodeValue` and glob.ts in step with this set. */
+const ESCAPABLE_CHARACTERS = '"\\*:=^~()'
+
 const isSpace = (char: string | undefined): boolean => !!char && /\s/u.test(char)
 const isWordOperator = (word: string): boolean =>
   ['AND', 'OR', 'NOT', 'XOR', 'XNOR', 'NAND', 'NOR'].includes(word)
@@ -249,7 +300,7 @@ function readQuoted(source: string, start: number): { value: string; end: number
     if (char === '\\' && index + 1 < source.length) {
       const next = source[index + 1]
       // Backslashes only escape syntax characters; elsewhere they are data.
-      if ('"\\*:=^~()'.includes(next)) {
+      if (ESCAPABLE_CHARACTERS.includes(next)) {
         value += next
         index += 2
         continue
@@ -268,82 +319,225 @@ function symbolAt(source: string, index: number): readonly [string, string] | un
   return SYMBOL_OPERATORS.find(([symbol]) => source.startsWith(symbol, index))
 }
 
-function lex(source: string, diagnostics: QueryDiagnostic[]): Lexeme[] {
+/** `literal`, or a user alias that points at it (the alias map cannot reach `literal` through canonicalFieldName). */
+function isLiteralFieldToken(token: string, aliases: QueryFieldAliases): boolean {
+  if (token === 'literal') return true
+  const target = aliases[token]
+  return !FIELD_NAMES.has(token) && typeof target === 'string' && target.toLocaleLowerCase() === 'literal'
+}
+
+/** Whether `token` (lowercase, before the colon) names a built-in field, an alias or `literal`. */
+const isFieldToken = (token: string, aliases: QueryFieldAliases): boolean =>
+  isKnownFieldName(token, aliases) || isLiteralFieldToken(token, aliases)
+
+/** Parse `1.5MB`, `500 KiB` or a plain byte count; undefined when the text is not a size. */
+export function parseByteSize(value: string): number | undefined {
+  const match = /^\s*(\d+(?:\.\d+)?)\s*(B|KB|KIB|MB|MIB|GB|GIB)?\s*$/iu.exec(value)
+  if (!match) return undefined
+  const amount = Number(match[1])
+  const unit = (match[2] ?? 'B').toLocaleUpperCase()
+  const power = unit.startsWith('G') ? 3 : unit.startsWith('M') ? 2 : unit.startsWith('K') ? 1 : 0
+  return amount * Math.pow(1024, power)
+}
+
+export function parseDate(value: string): number | undefined {
+  if (!value.trim()) return undefined
+  const timestamp = Date.parse(value)
+  return Number.isNaN(timestamp) ? undefined : timestamp
+}
+
+const COUNT_FIELDS: ReadonlySet<string> = new Set(['words', 'wordcount', 'tagcount', 'linkcount', 'backlinkcount', 'taskcount'])
+
+/** Why a numeric or date field can never match its value, or undefined when the value is usable. */
+function numericValueProblem(field: string, value: string): string | undefined {
+  const text = value.trim()
+  if (!text) return undefined
+  if (field === 'size' && parseByteSize(text) === undefined) {
+    return `Invalid size "${text}". Use a number with an optional unit (B, KB, KiB, MB, MiB, GB, GiB), for example size:>1MB.`
+  }
+  if (COUNT_FIELDS.has(field) && Number.isNaN(Number(text))) {
+    return `Invalid number "${text}" for ${field}:. Use a number, for example ${field}:>10.`
+  }
+  if ((field === 'created' || field === 'modified') && parseDate(text) === undefined) {
+    return `Invalid date "${text}" for ${field}:. Use a date such as ${field}:>2026-01-31.`
+  }
+  return undefined
+}
+
+/** The hint for `word:` when `word` is no field: the text is searched as typed. */
+function unknownFieldHint(word: string, aliases: QueryFieldAliases): string {
+  const suggestion = closestFieldName(word, [...FIELD_NAMES, 'literal', ...Object.keys(aliases)])
+  return suggestion
+    ? `Unknown field "${word}:", did you mean "${suggestion}:"? Searching for the text literally.`
+    : `Unknown field "${word}:". Searching for the text literally.`
+}
+
+function reportEmptyValue(label: string, span: SourceSpan, diagnostics: QueryDiagnostic[]): void {
+  diagnostics.push({ message: `"${label}" has no value yet, so it matches nothing.`, start: span.start, end: span.end, severity: 'warning' })
+}
+
+/** Symbolic operators that also occur in everyday prose (`Q & A`, `2 ^ 3`, `Wow !`). */
+const WEAK_SYMBOL_OPERATORS: ReadonlySet<string> = new Set(['&', '^', '!'])
+
+/**
+ * `word:` followed by more words, as in `Note: remember the milk` or `title: foo`. Nothing sits after
+ * the colon, so it is not a field predicate; it is read as text (see Parser.hintDanglingField).
+ */
+function isDanglingFieldWord(tokens: readonly Lexeme[], index: number): boolean {
+  const token = tokens[index]
+  if (!token || token.kind !== 'atom' || !/^[a-z][a-z0-9-]*:$/iu.test(token.value ?? '')) return false
+  const next = tokens[index + 1]
+  return next?.kind === 'atom' || next?.kind === 'phrase'
+}
+
+/** Optimal string alignment distance: edits and swaps of neighbouring letters count as one. */
+function editDistance(a: string, b: string): number {
+  const rows: number[][] = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array<number>(b.length).fill(0)])
+  for (let j = 1; j <= b.length; j++) rows[0][j] = j
+  for (let i = 1; i <= a.length; i++) {
+    for (let j = 1; j <= b.length; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1
+      rows[i][j] = Math.min(rows[i - 1][j] + 1, rows[i][j - 1] + 1, rows[i - 1][j - 1] + cost)
+      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) rows[i][j] = Math.min(rows[i][j], rows[i - 2][j - 2] + 1)
+    }
+  }
+  return rows[a.length][b.length]
+}
+
+/** The field name a mistyped word most likely means, or undefined when nothing is close. */
+function closestFieldName(word: string, candidates: readonly string[]): string | undefined {
+  if (word.length < 3) return undefined
+  const limit = word.length <= 4 ? 1 : 2
+  let best: { name: string, distance: number } | undefined
+  for (const name of candidates) {
+    const distance = editDistance(word, name)
+    if (distance <= limit && (!best || distance < best.distance)) best = { name, distance }
+  }
+  return best?.name
+}
+
+/**
+ * Split the query into lexemes.
+ *
+ * Syntax characters are syntax only at the edge of a word. A parenthesis inside a word (`foo(bar`) and
+ * a symbol such as `&` or `^` inside one (`R&D`) are text, a `)` that closes nothing is text, and a
+ * symbolic operator is an operator only when it stands alone. With `freeText` set nothing is syntax
+ * except a complete quoted phrase; that is how a query without fields, tags or Boolean operators is read.
+ */
+function lex(source: string, diagnostics: QueryDiagnostic[], freeText = false): Lexeme[] {
   const lexemes: Lexeme[] = []
+  // Parentheses currently open: a group opened at the start of a word, or text opened inside a word.
+  const open: Array<'group' | 'text'> = []
+  const atBoundary = (position: number): boolean =>
+    position >= source.length || isSpace(source[position]) || source[position] === '(' || source[position] === ')'
   let index = 0
   while (index < source.length) {
     if (isSpace(source[index])) {
       index++
       continue
     }
-    if (source[index] === '(') {
+    if (!freeText && source[index] === '(') {
+      open.push('group')
       lexemes.push({ kind: 'lparen', raw: '(', start: index, end: index + 1 })
       index++
       continue
     }
-    if (source[index] === ')') {
-      lexemes.push({ kind: 'rparen', raw: ')', start: index, end: index + 1 })
-      index++
-      continue
+    if (!freeText && source[index] === ')') {
+      const innermost = open[open.length - 1]
+      if (innermost === 'group') {
+        open.pop()
+        lexemes.push({ kind: 'rparen', raw: ')', start: index, end: index + 1 })
+        index++
+        continue
+      }
+      // A stray `)`, or one that closes a text `(`, is text and starts a word below.
+      if (innermost === 'text') open.pop()
     }
     if (source[index] === '"') {
       const quoted = readQuoted(source, index)
-      lexemes.push({
-        kind: 'phrase', raw: source.slice(index, quoted.end), value: quoted.value,
-        start: index, end: quoted.end,
-      })
-      if (!quoted.closed) {
-        diagnostics.push({
-          message: 'Unterminated quoted phrase.', start: index, end: source.length, severity: 'error',
+      // In free text an unterminated quote is an ordinary character, handled in the word loop.
+      if (quoted.closed || !freeText) {
+        lexemes.push({
+          kind: 'phrase', raw: source.slice(index, quoted.end), value: quoted.value,
+          start: index, end: quoted.end,
         })
-      }
-      index = quoted.end
-      continue
-    }
-
-    // Negation and compound symbolic operators are recognized only at token
-    // boundaries. `!=` is kept inside property comparisons, and ordinary
-    // hyphens remain part of filenames/words unless they prefix an atom.
-    if (source[index] === '!') {
-      const compound = symbolAt(source, index)
-      if (compound && ['NAND', 'NOR', 'XNOR'].includes(compound[1])) {
-        lexemes.push({ kind: 'operator', raw: compound[0], operator: compound[1], start: index, end: index + compound[0].length })
-        index += compound[0].length
+        if (!quoted.closed) {
+          diagnostics.push({
+            message: 'Unterminated quoted phrase.', start: index, end: source.length, severity: 'error',
+          })
+        }
+        index = quoted.end
         continue
       }
-      lexemes.push({ kind: 'operator', raw: '!', operator: 'NOT', start: index, end: index + 1 })
-      index++
-      continue
     }
 
-    const leadingSymbol = symbolAt(source, index)
-    if (leadingSymbol) {
-      lexemes.push({ kind: 'operator', raw: leadingSymbol[0], operator: leadingSymbol[1], start: index, end: index + leadingSymbol[0].length })
-      index += leadingSymbol[0].length
-      continue
+    if (!freeText) {
+      if (source[index] === '!') {
+        // Compound operators need a boundary after them. A `!` right in front of a word negates it;
+        // a lone `!` (as in French "Bonjour !") is text.
+        const compound = symbolAt(source, index)
+        if (compound && atBoundary(index + compound[0].length)) {
+          lexemes.push({ kind: 'operator', raw: compound[0], operator: compound[1], start: index, end: index + compound[0].length })
+          index += compound[0].length
+          continue
+        }
+        if (index + 1 < source.length && !isSpace(source[index + 1])) {
+          lexemes.push({ kind: 'operator', raw: '!', operator: 'NOT', start: index, end: index + 1 })
+          index++
+          continue
+        }
+      } else {
+        const leadingSymbol = symbolAt(source, index)
+        if (leadingSymbol && atBoundary(index + leadingSymbol[0].length)) {
+          lexemes.push({ kind: 'operator', raw: leadingSymbol[0], operator: leadingSymbol[1], start: index, end: index + leadingSymbol[0].length })
+          index += leadingSymbol[0].length
+          continue
+        }
+        // A hyphen directly in front of a group negates it: `-(a OR b)` is `NOT (a OR b)`.
+        if (source[index] === '-' && source[index + 1] === '(') {
+          lexemes.push({ kind: 'operator', raw: '-', operator: 'NOT', start: index, end: index + 1 })
+          index++
+          continue
+        }
+      }
     }
 
     let value = ''
     let quoteWasClosed = true
     const start = index
-    while (index < source.length && !isSpace(source[index]) && source[index] !== '(' && source[index] !== ')') {
+    while (index < source.length && !isSpace(source[index])) {
       const char = source[index]
+      if (!freeText && (char === '(' || char === ')')) {
+        if (char === '(') {
+          // A `(` right after a Boolean word (`NOT(...)`, `AND(...)`) opens a group; elsewhere it is text.
+          if (value.length === 0 || isWordOperator(value)) break
+          open.push('text')
+        } else if (value.length > 0 && open[open.length - 1] === 'group') {
+          break
+        } else if (value.length > 0 && open[open.length - 1] === 'text') {
+          open.pop()
+        }
+        value += char
+        index++
+        continue
+      }
+      // A backslash and the syntax character it escapes stay in the word together, so `\(`, `\)`,
+      // `\"` and `\^` are data here; `decodeValue` removes the backslash later.
+      if (char === '\\' && index + 1 < source.length && ESCAPABLE_CHARACTERS.includes(source[index + 1])) {
+        value += char + source[index + 1]
+        index += 2
+        continue
+      }
       if (char === '"') {
         const quoted = readQuoted(source, index)
+        if (!quoted.closed && freeText) {
+          value += char
+          index++
+          continue
+        }
         value += source.slice(index, quoted.end)
         quoteWasClosed = quoted.closed
         index = quoted.end
-        continue
-      }
-      const symbol = symbolAt(source, index)
-      if (symbol && value.length > 0 && !value.endsWith(':') && !value.endsWith('=') && !value.endsWith('~')) {
-        // An alias between operands is an operator. In an ordinary word or a
-        // path/field modifier, quote or escape the symbol to keep it literal.
-        break
-      }
-      if (char === '!' && source[index + 1] === '=') {
-        value += '!='
-        index += 2
         continue
       }
       value += char
@@ -375,6 +569,20 @@ function unquote(raw: string): string {
     return parsed.value
   }
   return raw
+}
+
+/** True when a quoted value is followed by more text, which `unquote` would silently drop. */
+function textAfterClosingQuote(raw: string): boolean {
+  const trimmed = raw.trim()
+  if (!trimmed.startsWith('"')) return false
+  const quoted = readQuoted(trimmed, 0)
+  return quoted.closed && quoted.end < trimmed.length
+}
+
+function reportTextAfterClosingQuote(raw: string, span: SourceSpan, diagnostics: QueryDiagnostic[]): void {
+  if (textAfterClosingQuote(raw)) {
+    diagnostics.push({ message: 'Unexpected text after closing quote.', start: span.start, end: span.end, severity: 'error' })
+  }
 }
 
 function findOutsideQuotes(input: string, needle: string): number {
@@ -418,7 +626,7 @@ function decodeScalar(raw: string): unknown {
   return text
 }
 
-function parseProperty(raw: string, span: SourceSpan): PropertyNode | null {
+function parseProperty(raw: string, span: SourceSpan, diagnostics: QueryDiagnostic[]): PropertyNode | null {
   const expression = raw.trim()
   let quote = false
   let escaped = false
@@ -437,6 +645,8 @@ function parseProperty(raw: string, span: SourceSpan): PropertyNode | null {
   const nameRaw = opAt === -1 ? expression : expression.slice(0, opAt)
   const name = decodeValue(nameRaw).trim()
   if (!name) return null
+  reportTextAfterClosingQuote(nameRaw, span, diagnostics)
+  if (opAt !== -1) reportTextAfterClosingQuote(expression.slice(opAt + comparison!.length), span, diagnostics)
   if (opAt === -1) {
     return { kind: 'property', name, comparison: 'exists', raw: `property:${raw}`, ...span }
   }
@@ -445,6 +655,7 @@ function parseProperty(raw: string, span: SourceSpan): PropertyNode | null {
   // `property:status=`). Keep it as an incomplete property node without a
   // parser error so the UI neither shouts nor falls back to a text query.
   if (!rawValue.trim()) {
+    reportEmptyValue(`property:${name}${comparison}`, span, diagnostics)
     return { kind: 'property', name, comparison: comparison!, value: undefined, rawValue, raw: `property:${raw}`, ...span }
   }
   return {
@@ -453,7 +664,7 @@ function parseProperty(raw: string, span: SourceSpan): PropertyNode | null {
   }
 }
 
-function parseFieldAtom(lexeme: Lexeme, diagnostics: QueryDiagnostic[], aliases: QueryFieldAliases = {}): QueryNode | null {
+function parseFieldAtom(lexeme: Lexeme, diagnostics: QueryDiagnostic[], aliases: QueryFieldAliases, exemptions: readonly RegExp[]): QueryNode | null {
   const value = lexeme.value ?? lexeme.raw
   const colon = findOutsideQuotes(value, ':')
   if (colon < 1) return null
@@ -463,18 +674,20 @@ function parseFieldAtom(lexeme: Lexeme, diagnostics: QueryDiagnostic[], aliases:
   const rawValue = value.slice(colon + 1)
 
   if (!FIELD_NAMES.has(field)) {
-    // URLs and Windows drive paths are ordinary text, not field expressions.
-    if (/^[a-z][a-z0-9+.-]*:\/\//iu.test(value) || /^[a-z]:[\\/]/iu.test(value)) return null
-    diagnostics.push({ message: `Unsupported field "${field}".`, start: lexeme.start, end: lexeme.end, severity: 'error' })
+    // Words matching a literal prefix (by default URLs and Windows drive paths) are ordinary text.
+    if (isLiteralPrefixed(value, exemptions)) return null
+    // An unknown field is not an error: the word is searched as plain text, and the hint says so.
+    diagnostics.push({ message: unknownFieldHint(field, aliases), start: lexeme.start, end: lexeme.end, severity: 'warning' })
     return { kind: 'text', value, raw: lexeme.raw, start: lexeme.start, end: lexeme.end }
   }
   if (field === 'property') {
     // `property:` by itself is an ordinary editing state. It selects no files,
     // stays on the structured-query path, and does not emit a transient error.
     if (!rawValue.trim()) {
+      reportEmptyValue(`${fieldToken}:`, lexeme, diagnostics)
       return { kind: 'property', name: '', comparison: 'exists', raw: `property:${rawValue}`, start: lexeme.start, end: lexeme.end }
     }
-    const property = parseProperty(rawValue, { start: lexeme.start, end: lexeme.end })
+    const property = parseProperty(rawValue, { start: lexeme.start, end: lexeme.end }, diagnostics)
     if (!property) {
       diagnostics.push({ message: 'Invalid property expression; expected property:name or property:name=value.', start: lexeme.start, end: lexeme.end, severity: 'error' })
       return { kind: 'text', value, raw: lexeme.raw, start: lexeme.start, end: lexeme.end }
@@ -487,6 +700,7 @@ function parseFieldAtom(lexeme: Lexeme, diagnostics: QueryDiagnostic[], aliases:
     // after the modifier is syntax only; it is not part of the stored pattern.
     const tagExact = rawValue.startsWith('=')
     const patternRaw = tagExact ? rawValue.slice(1) : rawValue
+    reportTextAfterClosingQuote(patternRaw, lexeme, diagnostics)
     // Preserve `\*` inside quoted patterns so the glob compiler can distinguish
     // a literal asterisk from an active wildcard.
     const pattern = decodeTagPattern(patternRaw).replace(/^#/u, '')
@@ -495,8 +709,14 @@ function parseFieldAtom(lexeme: Lexeme, diagnostics: QueryDiagnostic[], aliases:
     if (!pattern && !tagExact) {
       return { kind: 'field', field: 'has', value: 'tag', raw: lexeme.raw, start: lexeme.start, end: lexeme.end }
     }
-    // `tag:=` is incomplete while typing; malformed non-empty paths are
-    // still diagnosed by the validator below.
+    if (/^[\^~]/u.test(pattern)) {
+      diagnostics.push({
+        message: `Tags have no "${pattern[0]}" form: tag:${pattern.slice(1)} already matches from the start, and tag:=${pattern.slice(1)} matches exactly.`,
+        start: lexeme.start, end: lexeme.end, severity: 'error',
+      })
+    }
+    // `tag:=` has no path yet; malformed non-empty paths are diagnosed by the validator below.
+    if (!pattern) reportEmptyValue(`${fieldToken}:=`, lexeme, diagnostics)
     return { kind: 'field', field: 'tag', value: pattern, tagExact, raw: lexeme.raw, start: lexeme.start, end: lexeme.end }
   }
 
@@ -509,21 +729,32 @@ function parseFieldAtom(lexeme: Lexeme, diagnostics: QueryDiagnostic[], aliases:
   // field name and colon. The evaluator returns no matches for this state; it
   // must not fall back to ordinary full-text search or retain stale results.
   if (!rawValue.trim()) {
+    reportEmptyValue(`${fieldToken}:`, lexeme, diagnostics)
     return { kind: 'field', field, value: '', raw: lexeme.raw, start: lexeme.start, end: lexeme.end }
   }
 
   let fieldValue = decodeValue(rawValue)
   let titleMode: TitleMatchMode | undefined
   let matchMode: TextMatchMode = 'substring'
+  let globPattern: string | undefined
   const trimmedRawValue = rawValue.trimStart()
   const quotedValue = trimmedRawValue.startsWith('"')
+  // The value after an optional `=`, `^` or `~` modifier.
+  let body = trimmedRawValue
   if (!quotedValue) {
-    if (trimmedRawValue.startsWith('=')) { matchMode = 'exact'; fieldValue = decodeValue(trimmedRawValue.slice(1)) }
-    else if (trimmedRawValue.startsWith('^')) { matchMode = 'prefix'; fieldValue = decodeValue(trimmedRawValue.slice(1)) }
-    else if (trimmedRawValue.startsWith('~')) { matchMode = 'substring'; fieldValue = decodeValue(trimmedRawValue.slice(1)) }
-    else if (hasUnescapedWildcard(trimmedRawValue)) { matchMode = 'glob' }
+    if (trimmedRawValue.startsWith('=')) { matchMode = 'exact'; body = trimmedRawValue.slice(1) }
+    else if (trimmedRawValue.startsWith('^')) { matchMode = 'prefix'; body = trimmedRawValue.slice(1) }
+    else if (trimmedRawValue.startsWith('~')) { matchMode = 'substring'; body = trimmedRawValue.slice(1) }
+    const hasModifier = body !== trimmedRawValue
+    if (hasModifier) fieldValue = decodeValue(body)
+    // Wildcards work in every unquoted form; a modifier only decides where the pattern is anchored.
+    if (!body.trimStart().startsWith('"') && hasUnescapedWildcard(body)) {
+      globPattern = body.trim()
+      if (!hasModifier) matchMode = 'glob'
+    }
     if (field === 'title') titleMode = matchMode === 'glob' ? 'substring' : matchMode
   }
+  reportTextAfterClosingQuote(body, lexeme, diagnostics)
 
   let comparison: ComparisonOperator | undefined
   if (['size', 'words', 'wordcount', 'tagcount', 'linkcount', 'backlinkcount', 'taskcount', 'created', 'modified'].includes(field)) {
@@ -535,8 +766,9 @@ function parseFieldAtom(lexeme: Lexeme, diagnostics: QueryDiagnostic[], aliases:
       // non-matching and quiet until the user supplies a value.
     }
   }
+  if (!fieldValue.trim()) reportEmptyValue(`${fieldToken}:`, lexeme, diagnostics)
   return {
-    kind: 'field', field, value: fieldValue, comparison, titleMode, matchMode, rawValue,
+    kind: 'field', field, value: fieldValue, comparison, titleMode, matchMode, rawValue, globPattern,
     raw: lexeme.raw, start: lexeme.start, end: lexeme.end,
   }
 }
@@ -547,6 +779,7 @@ class Parser {
     private readonly lexemes: Lexeme[],
     private readonly diagnostics: QueryDiagnostic[],
     private readonly aliases: QueryFieldAliases = {},
+    private readonly exemptions: readonly RegExp[] = [],
   ) {}
 
   parse(): QueryNode | null {
@@ -595,15 +828,6 @@ class Parser {
         left = this.binary(op, left, right)
         continue
       }
-      if (left.kind === 'field' && left.field === 'title' && left.titleMode !== 'substring' && current.kind === 'atom') {
-        const nextValue = current.value ?? current.raw
-        // Unquoted exact/prefix title values may contain spaces; stop before another field/tag/operator.
-        if (findOutsideQuotes(nextValue, ':') < 0 && !nextValue.startsWith('#') && !nextValue.startsWith('-')) {
-          this.advance()
-          left = { ...left, value: `${left.value} ${decodeValue(nextValue)}`.trim(), raw: `${left.raw} ${current.raw}`, end: current.end }
-          continue
-        }
-      }
       if (this.canStartPrimary(current)) {
         const right = this.parseImplicitRight()
         if (this.isFreeTextNode(left) && this.isFreeTextNode(right)) {
@@ -646,10 +870,6 @@ class Parser {
         raw: node.raw, start: node.start, end: node.end,
       }
     }
-    if (node.kind === 'field' && node.field === 'tag' && node.value.startsWith('-')) {
-      const pattern = node.value.slice(1)
-      return { kind: 'not', child: { ...node, value: pattern }, raw: node.raw, start: node.start, end: node.end }
-    }
     return node
   }
 
@@ -665,7 +885,11 @@ class Parser {
       const child = this.parseOr()
       if (this.current().kind === 'rparen') {
         const close = this.advance()
-        return { ...child, raw: this.lexemes.slice(this.positionAt(open), this.position).map(t => t.raw).join(' '), start: open.start, end: close.end }
+        // A grouped predicate keeps the spelling it was typed with: predicate `raw` is searched for
+        // literally and masked out of note text, so it must not gain the parentheses and padding spaces.
+        const isPredicate = isQueryNodeLeaf(child) && !this.isFreeTextNode(child)
+        const raw = isPredicate ? child.raw : this.lexemes.slice(this.positionAt(open), this.position).map(t => t.raw).join(' ')
+        return { ...child, raw, start: open.start, end: close.end }
       }
       this.diagnostics.push({ message: 'Unmatched opening parenthesis.', start: open.start, end: open.end, severity: 'error' })
       return child
@@ -682,47 +906,110 @@ class Parser {
       return { kind: 'text', value: '', raw: '', start: current.start, end: current.end }
     }
     this.advance()
+    if (current.kind === 'phrase' && !(current.value ?? '').trim()) {
+      this.diagnostics.push({ message: 'Empty quotes match nothing.', start: current.start, end: current.end, severity: 'warning' })
+    }
     if (current.kind === 'phrase') {
       return { kind: 'phrase', value: current.value ?? '', raw: current.raw, start: current.start, end: current.end }
     }
     const rawValue = current.value ?? current.raw
     if (rawValue.startsWith('-"') && rawValue.endsWith('"')) {
       const quoted = readQuoted(rawValue, 1)
+      if (!quoted.value.trim()) this.diagnostics.push({ message: 'Empty quotes match nothing.', start: current.start, end: current.end, severity: 'warning' })
       const child: PhraseNode = { kind: 'phrase', value: quoted.value, raw: rawValue.slice(1), start: current.start + 1, end: current.end }
       return { kind: 'not', child, raw: current.raw, start: current.start, end: current.end }
     }
-    // Legacy exclusion can prefix a structured predicate too: -tag:#archived
-    // means NOT(actual tag predicate), not a text search for the syntax.
+    // `word: more words` has no value after the colon. It is plain text, with a hint when `word` is, or
+    // nearly is, a field name.
+    if (isDanglingFieldWord(this.lexemes, this.lexemes.indexOf(current))) {
+      this.hintDanglingField(current)
+      return { kind: 'text', value: decodeValue(rawValue), raw: current.raw, start: current.start, end: current.end }
+    }
+    // A leading hyphen negates exactly like NOT: `-tag:#archived`, `-#archived` and `-literal:x` mean
+    // NOT of the predicate, and `-foo:bar` reports the same unsupported field as `NOT foo:bar`. Any other
+    // word that starts with a hyphen is a legacy term exclusion, handled in parseUnary.
     if (rawValue.startsWith('-') && rawValue.length > 1) {
-      const positiveRaw = rawValue.slice(1)
-      const positiveColon = findOutsideQuotes(positiveRaw, ':')
-      const positiveField = positiveColon > 0 ? positiveRaw.slice(0, positiveColon).toLowerCase() : ''
-      if (isKnownFieldName(positiveField, this.aliases) || positiveField === 'literal') {
-        const child: QueryNode = positiveField === 'literal'
-          ? { kind: 'literal', value: decodeValue(positiveRaw.slice(positiveColon + 1)), raw: positiveRaw, start: current.start + 1, end: current.end }
-          : parseFieldAtom({ ...current, raw: positiveRaw, value: positiveRaw, start: current.start + 1 }, this.diagnostics, this.aliases)!
-        return { kind: 'not', child, raw: current.raw, start: current.start, end: current.end }
-      }
+      const positive: Lexeme = { ...current, raw: rawValue.slice(1), value: rawValue.slice(1), start: current.start + 1 }
+      const child = this.parsePredicate(positive)
+      if (child) return { kind: 'not', child, raw: `-${child.raw}`, start: current.start, end: child.end }
     }
-    const colon = findOutsideQuotes(rawValue, ':')
-    if (colon > 0) {
-      const field = rawValue.slice(0, colon).toLowerCase()
-      if (field === 'literal') {
-        return { kind: 'literal', value: decodeValue(rawValue.slice(colon + 1)), raw: current.raw, start: current.start, end: current.end }
-      }
-      const fieldNode = parseFieldAtom(current, this.diagnostics, this.aliases)
-      if (fieldNode) return fieldNode
-    }
-    if (rawValue.startsWith('#') && rawValue.length > 1) {
-      const pattern = rawValue.slice(1)
-      return { kind: 'tag', pattern, bare: true, literalNeedle: rawValue, raw: current.raw, start: current.start, end: current.end }
-    }
+    const predicate = this.parsePredicate(current)
+    if (predicate) return predicate
     if (/^[^\p{L}\p{N}]+$/u.test(rawValue) && rawValue.length > 0) {
       // Bare punctuation is still a semantic/rendered-text search. Only the
       // explicit literal: form opts into raw-source character matching.
       return { kind: 'text', value: decodeValue(rawValue), raw: current.raw, start: current.start, end: current.end }
     }
     return { kind: 'text', value: decodeValue(rawValue), raw: current.raw, start: current.start, end: current.end }
+  }
+
+  /** Parse one atom as a structured predicate (`literal:`, `field:value`, `#tag`); null means plain text. */
+  private parsePredicate(lexeme: Lexeme): QueryNode | null {
+    const rawValue = lexeme.value ?? lexeme.raw
+    const colon = findOutsideQuotes(rawValue, ':')
+    if (colon > 0) {
+      if (this.isLiteralField(rawValue.slice(0, colon).toLowerCase())) {
+        const literal = rawValue.slice(colon + 1)
+        reportTextAfterClosingQuote(literal, lexeme, this.diagnostics)
+        if (/^[=^~]/u.test(literal)) {
+          this.diagnostics.push({
+            message: `"literal:" searches the text as typed, so the "${literal[0]}" is part of it. Write literal:"…" to search the words alone.`,
+            start: lexeme.start, end: lexeme.end, severity: 'warning',
+          })
+        }
+        if (!decodeValue(literal).trim()) reportEmptyValue(`${rawValue.slice(0, colon).toLowerCase()}:`, lexeme, this.diagnostics)
+        return { kind: 'literal', value: decodeValue(literal), raw: lexeme.raw, start: lexeme.start, end: lexeme.end }
+      }
+      const fieldNode = parseFieldAtom(this.extendOpenValue(lexeme), this.diagnostics, this.aliases, this.exemptions)
+      if (fieldNode) return fieldNode
+    }
+    if (rawValue.startsWith('#') && rawValue.length > 1) {
+      return { kind: 'tag', pattern: rawValue.slice(1), bare: true, literalNeedle: rawValue, raw: lexeme.raw, start: lexeme.start, end: lexeme.end }
+    }
+    return null
+  }
+
+  private isLiteralField(token: string): boolean {
+    return isLiteralFieldToken(token, this.aliases)
+  }
+
+  /**
+   * An unquoted `=` or `^` value of a text field may span spaces: `title:=AI Roadmap` means
+   * `title:="AI Roadmap"`, wherever the predicate appears. The plain words that follow are read into the
+   * same atom, stopping at an operator, parenthesis, quoted phrase, `#tag`, `-term` or `field:value`.
+   * Doing this here, before the value is wrapped in a group or a NOT, keeps a quoted value or one ended
+   * by a closing parenthesis complete.
+   */
+  private extendOpenValue(lexeme: Lexeme): Lexeme {
+    const value = lexeme.value ?? lexeme.raw
+    const colon = findOutsideQuotes(value, ':')
+    if (colon < 1) return lexeme
+    const field = canonicalFieldName(value.slice(0, colon).toLowerCase(), this.aliases)
+    if (!MULTIWORD_FIELDS.has(field)) return lexeme
+    const rawValue = value.slice(colon + 1)
+    if (!/^[=^]/u.test(rawValue) || /^[=^]"/u.test(rawValue)) return lexeme
+    let extended = lexeme
+    for (let next = this.current(); next.kind === 'atom'; next = this.current()) {
+      const word = next.value ?? next.raw
+      if (findOutsideQuotes(word, ':') >= 0 || word.startsWith('#') || word.startsWith('-')) break
+      this.advance()
+      extended = { ...extended, raw: `${extended.raw} ${next.raw}`, value: `${extended.value ?? extended.raw} ${word}`, end: next.end }
+    }
+    return extended
+  }
+
+  /** Tell the user that `word:` followed by text is searched literally, when `word` is or nearly is a field. */
+  private hintDanglingField(lexeme: Lexeme): void {
+    const word = (lexeme.value ?? lexeme.raw).slice(0, -1).toLowerCase()
+    const isField = isFieldToken(word, this.aliases)
+    // Ordinary prose such as `Note: remember the milk` stays silent; only a probable mistyped field speaks up.
+    if (!isField && !closestFieldName(word, [...FIELD_NAMES, 'literal', ...Object.keys(this.aliases)])) return
+    this.diagnostics.push({
+      message: isField
+        ? `"${word}:" needs a value right after the colon. Searching for the text literally.`
+        : unknownFieldHint(word, this.aliases),
+      start: lexeme.start, end: lexeme.end, severity: 'warning',
+    })
   }
 
   private canStartPrimary(lexeme: Lexeme): boolean {
@@ -771,11 +1058,11 @@ class Parser {
     const value = lexeme.value ?? lexeme.raw
     if (!value || value.startsWith('#') || value.startsWith('-')) return false
     if (!/[\p{L}\p{N}]/u.test(value)) return false
+    if (isDanglingFieldWord(this.lexemes, this.lexemes.indexOf(lexeme))) return true
     const colon = findOutsideQuotes(value, ':')
     if (colon > 0 && /^[a-z][a-z0-9-]*$/iu.test(value.slice(0, colon))) {
-      // URL schemes remain ordinary text; other field-like prefixes are
-      // reserved and validated instead of being swallowed by text grouping.
-      return /^[a-z][a-z0-9+.-]*:\/\//iu.test(value) && !isKnownFieldName(value.slice(0, colon).toLowerCase(), this.aliases)
+      // A word before the colon that is no field makes the whole word plain text.
+      return !isFieldToken(value.slice(0, colon).toLowerCase(), this.aliases)
     }
     return true
   }
@@ -810,10 +1097,37 @@ class Parser {
 /** Parse a complete query and return syntax errors without throwing. */
 export function parseQueryLanguage(
   source: string,
-  options: { fieldAliases?: QueryFieldAliases } = {},
+  options: QueryLanguageOptions = {},
 ): ParsedQueryLanguage {
   const diagnostics: QueryDiagnostic[] = []
-  const lexemes = lex(source, diagnostics)
+  const exemptions = compileLiteralPrefixes(Array.isArray(options.literalPrefixes) ? options.literalPrefixes : DEFAULT_LITERAL_PREFIXES)
+  // Which kinds of query syntax a token list contains. Parentheses, `&`, `^` and `!` do not count on
+  // their own, and neither does a `word:` followed by more words, because all of them occur in prose.
+  const syntaxOf = (tokens: readonly Lexeme[]) => ({
+    hasStructuredField: tokens.some((token, tokenIndex) => {
+      if (token.kind !== 'atom' || isDanglingFieldWord(tokens, tokenIndex)) return false
+      const value = token.value ?? token.raw
+      const fieldProbe = value.startsWith('-') ? value.slice(1) : value
+      const colon = findOutsideQuotes(fieldProbe, ':')
+      if (colon <= 0 || !/^[a-z][a-z0-9-]*$/iu.test(fieldProbe.slice(0, colon))) return false
+      // Only a real field makes a query structured; `foo:bar` is plain text.
+      return isFieldToken(fieldProbe.slice(0, colon).toLowerCase(), options.fieldAliases ?? {})
+    }),
+    hasBoolOperator: tokens.some(token => token.kind === 'operator' && !WEAK_SYMBOL_OPERATORS.has(token.raw)),
+    hasBareTag: tokens.some(token => {
+      if (token.kind !== 'atom') return false
+      const value = token.value ?? ''
+      return (value.startsWith('-') ? value.slice(1) : value).startsWith('#')
+    }),
+  })
+  let lexemes = lex(source, diagnostics)
+  // A query with no fields, tags or Boolean operators is free text, whatever punctuation it contains:
+  // `foo(bar`, `Q & A`, `"for test` and `Bonjour !` are searched as typed and never raise syntax errors.
+  const initialSyntax = syntaxOf(lexemes)
+  if (!initialSyntax.hasStructuredField && !initialSyntax.hasBoolOperator && !initialSyntax.hasBareTag) {
+    diagnostics.length = 0
+    lexemes = lex(source, diagnostics, true)
+  }
   let root: QueryNode | null = null
   let nesting = 0
   let excessiveNesting = false
@@ -828,7 +1142,7 @@ export function parseQueryLanguage(
     } else if (excessiveNesting) {
       diagnostics.push({ message: 'Query nesting exceeds the limit of 64 levels.', start: 0, end: source.length, severity: 'error' })
     } else {
-      root = new Parser(lexemes, diagnostics, options.fieldAliases ?? {}).parse()
+      root = new Parser(lexemes, diagnostics, options.fieldAliases ?? {}, exemptions).parse()
     }
   } catch (error: unknown) {
     diagnostics.push({
@@ -851,9 +1165,13 @@ export function parseQueryLanguage(
         const valueParts = normalizeQueryValue(node.value).split(/\s+/u).filter(Boolean)
         const rawPattern = rawValue.replace(/^[=^~]/u, '')
         const rawParts = rawPattern.split(/\s+/u).filter(Boolean)
+        // An unquoted wildcard is a glob in every form; the modifier decides where it is anchored.
+        const wildcard = !rawPattern.trimStart().startsWith('"') && hasUnescapedWildcard(rawPattern)
+        const anchor = mode === 'prefix' ? 'start' : mode === 'substring' ? 'none' : 'full'
         if (!valueParts.length) return false
         return valueParts.every((part, index) => supportedValues.some(supported => {
           const candidate = normalizeQueryValue(supported)
+          if (wildcard) return globPatternMatches(candidate, rawParts[index] ?? part, normalizeQueryValue, anchor)
           if (mode === 'exact') return candidate === part
           if (mode === 'prefix' || mode === 'progressive') return candidate.startsWith(part)
           if (mode === 'substring') return candidate.includes(part)
@@ -862,6 +1180,8 @@ export function parseQueryLanguage(
           return globPatternMatches(candidate, rawParts[index] ?? part, normalizeQueryValue)
         }))
       }
+      const numericProblem = numericValueProblem(node.field, node.value)
+      if (numericProblem) diagnostics.push({ message: numericProblem, start: node.start, end: node.end, severity: 'error' })
       if (node.field === 'format' && node.value.trim() && !knownEnumValues(node, ['markdown', 'pdf', 'office', 'image', 'canvas', 'text', 'other'])) diagnostics.push({ message: `Unsupported format "${node.value}". Supported values: markdown, pdf, office, image, canvas, text, other.`, start: node.start, end: node.end, severity: 'error' })
       if (node.field === 'type' && node.value.trim() && !knownEnumValues(node, ['note', 'document', 'image', 'canvas', 'other'])) diagnostics.push({ message: `Unsupported type "${node.value}". Supported values: note, document, image, canvas, other.`, start: node.start, end: node.end, severity: 'error' })
       if (node.field === 'has' && node.value.trim() && !knownEnumValues(node, ['tags', 'tag', 'aliases', 'alias', 'frontmatter', 'properties', 'headings', 'heading', 'tasks', 'task', 'links', 'link', 'embeds', 'embed', 'content'])) diagnostics.push({ message: `Unsupported has: predicate "${node.value}".`, start: node.start, end: node.end, severity: 'error' })
@@ -874,7 +1194,11 @@ export function parseQueryLanguage(
           : rawValue.startsWith('~') ? 'substring'
           : hasUnescapedWildcard(rawValue) ? 'glob' : 'prefix'
         const typed = normalizeQueryValue(node.value)
+        const rawPattern = rawValue.replace(/^[=^~]/u, '')
+        const wildcard = !rawPattern.trimStart().startsWith('"') && hasUnescapedWildcard(rawPattern)
+        const anchor = mode === 'prefix' ? 'start' : mode === 'substring' ? 'none' : 'full'
         const supported = ['true', 'false'].some(candidate => {
+          if (wildcard) return globPatternMatches(candidate, rawPattern.trim(), normalizeQueryValue, anchor)
           if (mode === 'exact') return candidate === typed
           if (mode === 'prefix') return candidate.startsWith(typed)
           if (mode === 'substring') return candidate.includes(typed)
@@ -889,20 +1213,12 @@ export function parseQueryLanguage(
   validateNode(root)
   const hasPunctuationOnly = lexemes.some(token => (token.kind === 'atom' || token.kind === 'phrase') && !!token.value && !/[\p{L}\p{N}]/u.test(token.kind === 'phrase' ? token.value : token.value))
 
-  const hasStructuredField = lexemes.some(token => {
-    if (token.kind !== 'atom') return false
-    const value = token.value ?? token.raw
-    const fieldProbe = value.startsWith('-') ? value.slice(1) : value
-    const colon = findOutsideQuotes(fieldProbe, ':')
-    if (colon <= 0 || !/^[a-z][a-z0-9-]*$/iu.test(fieldProbe.slice(0, colon))) return false
-    // A URL scheme and a Windows drive letter are not structured query fields.
-    return !(/^[a-z][a-z0-9+.-]*:\/\//iu.test(fieldProbe) || /^[a-z]:[\\/]/iu.test(fieldProbe))
-  })
+  const { hasStructuredField, hasBareTag } = syntaxOf(lexemes)
   const hasBoolOperator = lexemes.some(token => token.kind === 'operator')
-  const hasBareTag = lexemes.some(token => token.kind === 'atom' && (token.value ?? '').startsWith('#'))
   const hasGrouping = lexemes.some(token => token.kind === 'lparen' || token.kind === 'rparen')
   const hasPunctuationOnlyText = root?.kind === 'literal' || hasPunctuationOnly
-  const isAdvanced = hasStructuredField || hasBoolOperator || hasBareTag || hasGrouping || diagnostics.length > 0 || hasPunctuationOnlyText
+  const hasErrors = diagnostics.some(diagnostic => diagnostic.severity === 'error')
+  const isAdvanced = hasStructuredField || hasBoolOperator || hasBareTag || hasGrouping || hasErrors || hasPunctuationOnlyText
   return { source, root, diagnostics, isAdvanced }
 }
 

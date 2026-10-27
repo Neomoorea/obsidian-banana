@@ -206,7 +206,7 @@ export default class BananaPlugin extends Plugin {
   }
 
   async executeFirstLaunchTasks(): Promise<void> {
-    const code = '1.0.0'
+    const code = '1.0.1'
     // if (settings.welcomeMessage !== code && getTextExtractor()) {
     //   const welcome = new DocumentFragment()
     //   welcome.createSpan({}, span => {

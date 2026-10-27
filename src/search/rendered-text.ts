@@ -1,6 +1,6 @@
 import type { TextMatchMode } from './query-language'
 import { normalizeQueryValue } from './query-language'
-import { globPatternMatches } from './glob'
+import { globPatternMatches, hasUnescapedWildcard } from './glob'
 
 export interface MappedText {
   text: string
@@ -15,6 +15,29 @@ export type NormalizedMappedText = MappedText
 /** Create an identity-offset source view for raw-source searches. */
 export function buildSourceMappedText(source: string): MappedText {
   return { text: source, sourceOffsets: Array.from({ length: source.length }, (_, index) => index), sourceEnds: Array.from({ length: source.length }, (_, index) => index + 1) }
+}
+
+// Elements whose tags are removed even when they carry attributes. Anything else
+// that merely looks like a tag, such as the `<y and z>` in `x<y and z>w`, is prose.
+const HTML_ELEMENT_NAMES = new Set([
+  'a', 'abbr', 'address', 'article', 'aside', 'audio', 'b', 'bdi', 'bdo', 'big', 'blockquote', 'br', 'button',
+  'canvas', 'caption', 'center', 'cite', 'code', 'col', 'colgroup', 'data', 'dd', 'del', 'details', 'dfn',
+  'dialog', 'div', 'dl', 'dt', 'em', 'embed', 'fieldset', 'figcaption', 'figure', 'font', 'footer', 'form',
+  'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hr', 'i', 'iframe', 'img', 'input', 'ins', 'kbd', 'label',
+  'legend', 'li', 'main', 'mark', 'nav', 'ol', 'p', 'picture', 'pre', 'q', 'rp', 'rt', 'ruby', 's', 'samp',
+  'section', 'small', 'source', 'span', 'strike', 'strong', 'sub', 'summary', 'sup', 'table', 'tbody', 'td',
+  'tfoot', 'th', 'thead', 'time', 'tr', 'track', 'u', 'ul', 'var', 'video', 'wbr',
+])
+
+/**
+ * Whether `candidate` (from `<` to the first `>`) is an HTML tag to remove. Bare
+ * tags (`<b>`, `</b>`, `<br/>`) are removed whatever their name. A tag with
+ * attributes, or with a space before `/>`, is removed only for a known element.
+ */
+function isHtmlTag(candidate: string): boolean {
+  if (/^<\/?[a-z][a-z0-9-]*\/?>$/iu.test(candidate)) return true
+  const withAttributes = /^<\/?([a-z][a-z0-9-]*)\s[^<>]*>$/iu.exec(candidate)
+  return !!withAttributes && HTML_ELEMENT_NAMES.has(withAttributes[1].toLowerCase())
 }
 
 /**
@@ -41,7 +64,8 @@ export function buildRenderedText(source: string): MappedText {
   }
   // YAML is displayed by Obsidian's properties UI, not as prose in the note
   // body. Keep it in the raw-source view but omit it from the rendered view.
-  let index = source.startsWith('---\n') ? (() => {
+  // Both LF and CRLF files are recognised; the closing search below only needs `\n`.
+  let index = /^---\r?\n/u.test(source) ? (() => {
     const close = source.indexOf('\n---', 4)
     if (close < 0) return 0
     const after = source.indexOf('\n', close + 1)
@@ -109,7 +133,7 @@ export function buildRenderedText(source: string): MappedText {
     // <https://example.com> for tags.
     if (char === '<') {
       const close = source.indexOf('>', index + 1)
-      if (close > index && /^<\/?[a-z][a-z0-9-]*(?:\s[^<>]*|\/?>)$/iu.test(source.slice(index, close + 1))
+      if (close > index && isHtmlTag(source.slice(index, close + 1))
         && !/^<\/?[a-z][a-z0-9+.-]*:/iu.test(source.slice(index, close + 1))) {
         index = close + 1
         continue
@@ -205,15 +229,26 @@ export function normalizeMappedText(
   return { text, sourceOffsets, sourceEnds }
 }
 
-/** Shared matcher for text-valued structured fields; wildcard glob is anchored. */
-export function matchStructuredText(candidate: string, rawPattern: string, mode: TextMatchMode, rawPatternForGlob?: string): boolean {
+/**
+ * Shared matcher for text-valued structured fields. `globPattern` is the raw,
+ * unquoted wildcard pattern the parser found in the value (see `FieldNode.globPattern`).
+ * When it is present the mode only decides where the glob is anchored: `exact`
+ * and `glob` match the whole value, `prefix` its start, `substring` anywhere.
+ * Without it the value is compared literally, so a quoted `*` stays a plain `*`.
+ */
+export function matchStructuredText(candidate: string, rawPattern: string, mode: TextMatchMode, globPattern?: string): boolean {
   const value = normalizeQueryValue(candidate)
   const pattern = normalizeQueryValue(rawPattern)
   if (!pattern) return false
+  // `glob` mode without an explicit pattern globs the typed value itself.
+  const glob = globPattern ?? (mode === 'glob' ? rawPattern : undefined)
+  if (glob !== undefined && (mode === 'glob' || hasUnescapedWildcard(glob))) {
+    return globPatternMatches(candidate, glob, normalizeQueryValue, mode === 'prefix' ? 'start' : mode === 'substring' ? 'none' : 'full')
+  }
   switch (mode) {
     case 'exact': return value === pattern
     case 'prefix': return value.startsWith(pattern)
     case 'substring': return value.includes(pattern)
-    case 'glob': return globPatternMatches(candidate, rawPatternForGlob ?? rawPattern, normalizeQueryValue)
+    case 'glob': return false
   }
 }

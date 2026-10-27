@@ -11,15 +11,20 @@ export function hasUnescapedWildcard(pattern: string): boolean {
   return false
 }
 
+/** Where a glob must match: the whole value, only its start, or anywhere inside it. */
+export type GlobAnchor = 'full' | 'start' | 'none'
+
 /**
- * Match a full string against a glob while keeping escaped `*` and `?` literal.
+ * Match a string against a glob while keeping escaped `*` and `?` literal.
  * Escapes are parsed from the raw user pattern, before query decoding can erase
- * the distinction between a wildcard and a literal wildcard character.
+ * the distinction between a wildcard and a literal wildcard character. By
+ * default the pattern must match the complete value (`anchor: 'full'`).
  */
 export function globPatternMatches(
   candidate: string,
   rawPattern: string,
   normalize: (value: string) => string = value => value.normalize('NFKC').replace(/\s+/gu, ' ').trim().toLocaleLowerCase(),
+  anchor: GlobAnchor = 'full',
 ): boolean {
   const value = normalize(candidate)
   const pattern = rawPattern.normalize('NFKC').replace(/\s+/gu, ' ').trim().toLocaleLowerCase()
@@ -49,8 +54,10 @@ export function globPatternMatches(
     else expression += character.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&')
   }
 
+  const start = anchor === 'none' ? '' : '^'
+  const end = anchor === 'full' ? '$' : ''
   try {
-    return new RegExp(`^${expression}$`, 'iu').test(value)
+    return new RegExp(`${start}${expression}${end}`, 'iu').test(value)
   } catch {
     return false
   }

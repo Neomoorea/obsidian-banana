@@ -100,6 +100,8 @@ export interface BananaSettings extends WeightingSettings {
   simpleSearch: boolean
   /** Parser-level user aliases from short field names to built-in query fields. */
   queryFieldAliases: Record<string, string>
+  /** Start-of-word patterns that are plain text, not fields: URL schemes and drive paths by default. */
+  queryLiteralPrefixes: string[]
   /** Saved viewport-relative position of the resizable query modal. */
   queryModalPosition: { left: number; top: number } | null
   /** Saved modal width and optional user-selected vertical height cap, in CSS pixels. */

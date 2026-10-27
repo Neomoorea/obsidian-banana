@@ -27,6 +27,26 @@ describe('block and section scoped matching', () => {
     expect(getScopeRanges(source, 'block').map(range => source.slice(range.start, range.end).trim())).toEqual(['Visible body text.'])
   })
 
+  it('keeps a blank line inside the frontmatter from pulling frontmatter text into the first block', () => {
+    const source = '---\nstatus: active\n\nowner: me\n---\nVisible body text.\n\nSecond block.\n'
+    const blocks = getScopeRanges(source, 'block')
+    expect(blocks.map(range => source.slice(range.start, range.end).trim())).toEqual(['Visible body text.', 'Second block.'])
+    expect(blocks[0].start).toBe(getBodyStartOffset(source))
+    expect(matches(source, 'owner', 'block')).toEqual([])
+    expect(matches(source, 'visible', 'block')).toHaveLength(1)
+  })
+
+  it('anchors a wildcard pattern in a scope by its match mode', () => {
+    const source = 'AI LLM\n\nAI LLMs\n\ndefinitions of AI LLM\n'
+    const found = (query: string, mode: 'exact' | 'prefix' | 'substring' | 'glob', globPattern?: string) =>
+      findScopedTextMatches(source, query, 'block', mode, normalizeCharacter, globPattern)
+        .map(match => source.slice(match.scope.start, match.scope.end).trim())
+    expect(found('AI LLM*', 'exact', 'AI LLM*')).toEqual(['AI LLM', 'AI LLMs'])
+    expect(found('AI*', 'prefix', 'AI*')).toEqual(['AI LLM', 'AI LLMs'])
+    expect(found('of*LLM', 'substring', 'of*LLM')).toEqual(['definitions of AI LLM'])
+    expect(found('AI LLM', 'exact')).toEqual(['AI LLM'])
+  })
+
   it('does not exclude content when the frontmatter closing fence is missing', () => {
     const source = '---\nstatus: active\n\nVisible body text.\n'
     expect(getBodyStartOffset(source)).toBe(0)

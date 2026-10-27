@@ -16,9 +16,9 @@ export class Query {
   public readonly rawText: string
   public readonly language: ParsedQueryLanguage
 
-  constructor(text = '', options: { ignoreDiacritics: boolean, ignoreArabicDiacritics: boolean, fieldAliases?: QueryFieldAliases }) {
+  constructor(text = '', options: { ignoreDiacritics: boolean, ignoreArabicDiacritics: boolean, fieldAliases?: QueryFieldAliases, literalPrefixes?: readonly string[] }) {
     this.rawText = text
-    this.language = parseQueryLanguage(text, { fieldAliases: options.fieldAliases })
+    this.language = parseQueryLanguage(text, { fieldAliases: options.fieldAliases, literalPrefixes: options.literalPrefixes })
     if (options.ignoreDiacritics) {
       text = removeDiacritics(text, options.ignoreArabicDiacritics)
     }
@@ -62,6 +62,15 @@ export class Query {
     // Get strings in quotes, and remove the quotes
     this.#inQuotes =
       text.match(/"([^"]+)"/g)?.map(o => o.replace(/"/g, '')) ?? []
+    // In free text, the characters that are query syntax elsewhere are searched exactly as typed: a word
+    // with a `*` in it, or with one of ( ) : = ^ ~ & | inside it (`LLM*`, `foo(bar`, `foo:bar`, `R&D`).
+    // Without this the tokenizer drops the punctuation, so `AI LLM*` would match like `AI LLM` and
+    // `foo(bar` would also return `foo:bar`. A leading hyphen marks an exclusion and is left alone.
+    for (const word of text.replace(/"[^"]*"/g, ' ').split(/\s+/)) {
+      if (!word.startsWith('-') && /\*|\S[():=^~&|]\S/.test(word)) {
+        this.#inQuotes.push(word.replace(/\\(["\\*:=^~()])/g, '$1'))
+      }
+    }
   }
 
   public isEmpty(): boolean {

@@ -27,6 +27,27 @@ describe('The Query class', () => {
     expect(exclusions).toContain('quoted exclusion')
   })
 
+  it('searches a word with a parenthesis inside it exactly as typed', () => {
+    const options = { ignoreDiacritics: true, ignoreArabicDiacritics: true }
+    expect(new Query('foo(bar', options).getExactTerms()).toEqual(['foo(bar'])
+    expect(new Query('Foo(Bar) baz', options).getExactTerms()).toEqual(['foo(bar)'])
+    // An escaped parenthesis is the same text without its backslash.
+    expect(new Query('foo\\(bar', options).getExactTerms()).toEqual(['foo(bar'])
+    // Parentheses at the edge of a word are only punctuation.
+    expect(new Query('(foo bar)', options).getExactTerms()).toEqual([])
+  })
+
+  it('searches the query-syntax characters of free text exactly as typed', () => {
+    const options = { ignoreDiacritics: true, ignoreArabicDiacritics: true }
+    // `AI LLM*` must not behave like `AI LLM`: the asterisk is part of the text.
+    expect(new Query('AI LLM*', options).getExactTerms()).toEqual(['llm*'])
+    expect(new Query('foo:bar', options).getExactTerms()).toEqual(['foo:bar'])
+    expect(new Query('R&D x^2 a=b', options).getExactTerms()).toEqual(['r&d', 'x^2', 'a=b'])
+    // Sentence punctuation and exclusions are left alone.
+    expect(new Query('what? wow! (maybe)', options).getExactTerms()).toEqual([])
+    expect(new Query('meeting -foo:bar', options).getExactTerms()).toEqual([])
+  })
+
   it('should not exclude words when there is no space before', () => {
     // Act
     const query = new Query('foo bar-baz', {

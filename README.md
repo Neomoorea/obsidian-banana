@@ -22,6 +22,7 @@ Banana is for people who want to find a note — and for people who want to inte
   - [Basic text and phrases](#basic-text-and-phrases)
   - [Boolean operators and precedence](#boolean-operators-and-precedence)
   - [Grouping, implicit AND, and exclusions](#grouping-implicit-and-and-exclusions)
+  - [Free text and queries](#free-text-and-queries)
   - [Field modifiers and values](#field-modifiers-and-values)
   - [Complete field reference](#complete-field-reference)
   - [Properties and typed comparisons](#properties-and-typed-comparisons)
@@ -80,7 +81,9 @@ Quoted phrases are normalised for case, Unicode compatibility, and whitespace. C
 
 ### Boolean operators and precedence
 
-Textual operators are recognized when they are **standalone uppercase words**. Operators inside quoted strings are literal text. Lowercase `and`, `or`, and `not` are ordinary search text.
+Textual operators are recognised when they are **standalone uppercase words**. Operators inside quoted strings are literal text. Lowercase `and`, `or`, and `not` are ordinary search text.
+
+Symbolic aliases follow the same rule: they are operators only when they stand alone, separated from their operands by a space or a parenthesis (`A && B`, `A ^ B`, `A || B`), and `!` negates the word or group it touches (`!tag:#archived`, `!(A OR B)`). Inside a word they are ordinary text, so `R&D`, `x^2` and `a&&b` are searched as typed, and a lone `!` (as in `Hello !`) is text. Leave spaces around symbolic operators: `tag:#AI&&tag:#CS` is a single tag value, not two tags.
 
 | Precedence (highest first) | Operators | Symbolic aliases |
 | --- | --- | --- |
@@ -120,7 +123,7 @@ tag:#AI XOR tag:#CS
 
 ### Grouping, implicit AND, and exclusions
 
-Parentheses group subexpressions. Adjacent independent predicates imply `AND`, so these are equivalent:
+Parentheses group subexpressions. A parenthesis opens a group only at the start of a word, or right after an operator word (`NOT(...)`), and closes the innermost open group. Inside a word (`foo(bar`) or when it closes nothing (`:)`), it is ordinary text. Adjacent independent predicates imply `AND`, so these are equivalent:
 
 ```text
 tag:#AI content:"machine learning"
@@ -129,14 +132,36 @@ tag:#AI AND content:"machine learning"
 
 A consecutive free-text run stays a single text query: `machine learning` is not rewritten as `machine AND learning`.
 
-A leading hyphen is retained as a legacy exclusion for a standalone term or predicate:
+A leading hyphen negates what follows, exactly like `NOT`:
 
 ```text
 meeting -draft
 path:Projects -tag:#archived
+-#draft
+-(tag:#archived OR property:status=deleted)
 ```
 
-In an advanced query, `-tag:#archived` is unary exclusion and therefore behaves like `NOT tag:#archived`. Hyphens inside dates, words, filenames, and paths are not Boolean operators.
+`-tag:#archived` behaves like `NOT tag:#archived`, `-#draft` like `NOT #draft`, `-literal:foo:bar` like `NOT literal:"foo:bar"`, and `-(A OR B)` like `NOT (A OR B)`. Exclusion goes in front of the query, never inside its value: `title:-foo` finds titles containing `-foo`, while `-title:foo` excludes titles containing `foo`. Hyphens inside dates, words, filenames, and paths are not Boolean operators.
+
+### Free text and queries
+
+A search is a **query** as soon as it contains a field (`title:`), a tag (`#AI`), or a Boolean operator (`AND`, `OR`, `NOT`, `XOR`, `NAND`, `NOR`, `XNOR`, `&&`, `||`). Everything else is **free text**, and free text is searched as typed: it never raises a syntax error, whatever punctuation it contains. `foo(bar`, `"for test`, `R&D`, `x^2`, `Q & A`, `Hello !` and `what? really` are all ordinary searches.
+
+In free text, a word that contains `*`, or one of `( ) : = ^ ~ & |` inside it, must appear exactly as typed in the note. `AI LLM*` finds notes containing `LLM*`, not every note about `AI LLM`. Sentence punctuation such as a final `?` or `!` is ignored as usual.
+
+Inside a query the same rule applies word by word: `tag:#AI foo(bar` searches for `foo(bar` as text. Syntax characters count only at the edge of a word. A group still has to be closed and a quote still needs its partner, so `tag:#AI (foo` and `tag:#AI "for test` report an error.
+
+A word followed by a colon is read as a field only when it is one. Otherwise Banana searches the text literally and says so in a grey hint under the search field:
+
+| You type | Banana does |
+| --- | --- |
+| `foo:bar` | Searches for the text `foo:bar` and hints `Unknown field "foo:"`. |
+| `tga:#x` | Searches for the text and hints `did you mean "tag:"?`. |
+| `title: foo` | Searches for the text `title: foo` and hints that `title:` needs a value right after the colon. |
+| `Note: remember the milk` | Searches for the text, with no hint. |
+| `https://example.com`, `C:\Users` | Searches for the text, with no hint (see [Literal text prefixes](#literal-text-prefixes)). |
+
+Hints are also shown for empty values (`title:`, `property:status=`, `literal:`) and for empty quotes (`""`), which would otherwise match nothing without saying why.
 
 ### Field modifiers and values
 
@@ -147,13 +172,26 @@ For fields that support structured text matching, these forms are available:
 | Form | Meaning | Example |
 | --- | --- | --- |
 | `field:value` | Normalised substring match by default; enum-like fields may use progressive-prefix matching while typing. | `title:roadmap` |
+| `field:"value"` | Normalised substring match of the quoted text. Wildcards inside quotes are literal. | `title:"AI LLM"` |
 | `field:=value` | Exact normalised match, or exact-path mode for `tag:`. | `title:=AI Roadmap` |
 | `field:^value` | Prefix match. | `title:^AI` |
 | `field:~value` | Substring match explicitly. | `title:~road` |
-| `field:pattern*` | Glob match where supported; `*` matches zero or more characters. | `file:*.md` |
-| `field:pattern?` | Glob match where supported; `?` matches one character. | `file:Plan?.md` |
+| `field:pattern*` | Glob over the whole value; `*` matches zero or more characters. | `file:*.md` |
+| `field:pattern?` | Glob over the whole value; `?` matches one character. | `file:Plan?.md` |
+| `field:=pattern*` | Glob over the whole value, written with `=`. | `title:=AI LLM*` |
+| `field:^pattern*` | Glob anchored at the start of the value. | `title:^AI*LLM` |
+| `field:~pattern*` | Glob matched anywhere in the value. | `title:~AI*LLM` |
 
-Not every field supports every modifier. The field reference below calls out important exceptions. For filenames, paths, folders, aliases, headings, tasks, links, embeds, and other glob-capable text fields, unescaped `*` and `?` are glob wildcards. Tag paths use their own segment-aware rules.
+Not every field supports every modifier. The field reference below calls out important exceptions. For filenames, paths, folders, aliases, headings, tasks, links, embeds, and other glob-capable text fields, unescaped `*` and `?` are glob wildcards in every unquoted form; the modifier only decides where the pattern is anchored. Quoting a value, or escaping a wildcard (`\*`), makes it literal. Tag paths use their own segment-aware rules.
+
+For notes titled `AI LLM`, `AI LLMs`, `definitions of AI LLM` and `AI and LLM`:
+
+| Query | Finds |
+| --- | --- |
+| `title:"AI LLM"` | `AI LLM`, `AI LLMs`, `definitions of AI LLM` |
+| `title:=AI LLM` | `AI LLM` |
+| `title:=AI LLM*` | `AI LLM`, `AI LLMs` |
+| `title:=AI *LLM` | `AI LLM`, `AI and LLM` |
 
 Quote values with spaces or operator-like characters when needed:
 
@@ -164,7 +202,9 @@ heading:"Implementation notes"
 literal:"tag:#machine-learning"
 ```
 
-The title exact and prefix forms also support unquoted multiword values, for example `title:=AI Roadmap` and `title:^AI Road`.
+The unquoted `=` and `^` forms of `title:`, `alias:`, `heading:`, `section:`, `block:`, `line:`, `task:` and `contains:` also accept values with spaces, wherever the predicate appears: `title:=AI Roadmap` means `title:="AI Roadmap"`, `title:^AI Road` means `title:^"AI Road"`, and `tag:#x title:=AI Roadmap` reads `AI Roadmap` as the title. The value runs until an operator, a parenthesis, a quoted phrase, a `#tag`, a `-term` or another `field:value`. Quote the value to end it earlier: `title:="AI Roadmap" budget` searches the exact title `AI Roadmap` and, separately, the text `budget`. Without a modifier, `title:AI Roadmap` is a title search for `AI` plus a search for `Roadmap`.
+
+Fields that hold names and paths (`path:`, `folder:`, `file:`, `linksto:`, `outlinks:`, `inlinks:`, `linkedby:`, `embed:`) always take a single word, so `path:^Projects/ meeting` is a path prefix plus a search for `meeting`. Quote a value that contains spaces.
 
 Numeric and date fields use comparisons following the colon, such as `size:>1MB`, `modified:>=2026-01-01`, and `tagcount:>=2`. Frontmatter properties have their own comparison syntax; see [Properties and typed comparisons](#properties-and-typed-comparisons).
 
@@ -192,7 +232,7 @@ The table lists the built-in field names and aliases currently implemented by Ba
 | `content:` | Semantic predicate over indexed note source. Unquoted values use the indexed text path; a quoted phrase such as `content:"machine learning"` must appear contiguously in the raw Markdown source (case/Unicode/whitespace normalisation applies), and does not bridge formatting markers. | `content:AI`, `content:"machine learning"` |
 | `heading:` | Heading text from Obsidian's cached metadata. | `heading:architecture`, `heading:^API`, `heading:=Overview` |
 | `section:` | Rendered text in one Markdown heading section at a time. Frontmatter is excluded. A section continues until the next heading at the same or a higher level; a note without headings has one implicit section. | `section:architecture`; two `section:` predicates joined by `AND` must match the same section. |
-| `block:` | Rendered text in one blank-line-delimited source block at a time. Frontmatter is excluded. | `block:"machine learning"`; two `block:` predicates joined by `AND` must match the same block. |
+| `block:` | Rendered text in one blank-line-delimited source block at a time. Frontmatter is excluded. | `block:"machine learning"`; two `block:` predicates joined by `AND` must match the same section. `section:` matches the text of a section, not its heading name: to find notes by heading names, use `heading:`. |
 | `line:` | Individual lines of cached document text. | `line:TODO`, `line:^WARNING` |
 | `task:` | Markdown task-list lines; understands task state words. | `task:todo`, `task:done`, `task:incomplete`, `task:complete`, `task:"review draft"` |
 | `task-todo:` | Whether a note has any unchecked task lines. | `task-todo:true`, `task-todo:false`, `task-todo:t` |
@@ -208,7 +248,7 @@ The table lists the built-in field names and aliases currently implemented by Ba
 | `is:` | Computed file state: `empty`, `orphan`, `tagged`, `untagged`, `todo`, `done`, `note`, `attachment`, `linked`, or `unlinked`. | `is:todo`, `is:attachment`, `is:unlinked` |
 | `empty:` | Whether the rendered body is empty. Frontmatter alone does not make the body non-empty. | `empty:true`, `empty:false` |
 | `orphan:` | Whether the note has no incoming resolved links. This is about backlinks, not outgoing links. | `orphan:true`, `orphan:false` |
-| `literal:` | Normalised character substring in cached indexed content, full path, or normalised title. It never evaluates query syntax inside the value. | `literal:"tag:#AI"`, `literal:"%%%"`, `literal:"C:\\Projects\\AI"` |
+| `literal:` | Normalised character substring in cached indexed content, full path, or normalised title. It never evaluates query syntax inside the value, and it takes no modifier: `literal:=x` searches for the text `=x`. | `literal:"tag:#AI"`, `literal:"%%%"`, `literal:"C:\\Projects\\AI"` |
 
 Additional notes:
 
@@ -288,6 +328,7 @@ Markdown source and the text a reader sees are not always the same string. Banan
 - `section:` searches within one heading-delimited section at a time.
 - Common inline Markdown markers are ignored when checking visible phrase continuity, so a query for `"convolutional neural network"` can match `**convolutional** neural network`.
 - Markdown-escaped punctuation is unescaped in rendered matching, so `%%%` can match source written as `\%\%\%`.
+- HTML tags are ignored in rendered matching: bare tags such as `<b>` and `<br/>` always, and tags with attributes (`<span class="x">`, `<img src="a.png">`, `<br />`) when the tag name is a known HTML element. Text that only looks like a tag, such as `x<y and z>w`, is left alone.
 - When a source span is available, selecting a result can navigate to the relevant source location and highlight it.
 
 `literal:` is for cases where the source characters themselves matter. It performs a normalised character-substring search and does not evaluate nested syntax. In addition, Banana runs a literal-source check for ordinary text queries and for the complete spelling of every advanced query. This is intentional: if a note contains `section:AI` as an example of query syntax, searching for `section:AI` can find it as `Literal`, even though the same query also has a semantic interpretation. Query spelling is never silently rewritten inside the note. This literal-source check is not interchangeable with rendered-text search.
@@ -297,11 +338,11 @@ Markdown source and the text a reader sees are not always the same string. Banan
 ### Escaping, normalisation, and diagnostics
 
 - Text filters are case-insensitive and normalise Unicode with NFKC and collapse runs of whitespace, unless a field says otherwise.
-- Inside quoted strings, `\"` escapes a quote and `\\` escapes a backslash. Outside quotes, a backslash can escape supported syntax characters.
+- Inside quoted strings, `\"` escapes a quote and `\\` escapes a backslash. Outside quotes, a backslash escapes any of `" \ * : = ^ ~ ( )`, so `foo\(bar`, `a\^b` and `title:\"hi\"` search for those characters instead of reading them as syntax.
 - In glob patterns, `\*` and `\?` mean literal `*` and `?`. An escaped wildcard remains literal even when another wildcard in the same pattern is active.
 - Operators inside quoted strings are text, and operator words must be uppercase and standalone to be recognised.
-- A malformed advanced query does **not** silently fall back to a plain text search. Unknown fields, unmatched parentheses, missing Boolean operands, unterminated quotes, invalid completed tag patterns, unsupported completed enum values, and over-complex input yield a diagnostic and no results.
-- Diagnostics are delayed until one second without typing, so incomplete input does not yell at you mid-keystroke. Empty known-field values such as `title:`, `path:`, `format:`, `has:`, and `property:status=` remain quiet editing states and do not leave stale results on screen.
+- A malformed query does **not** silently fall back to a plain text search. Unmatched parentheses, missing Boolean operands, unterminated quotes, text glued after a closing quote (`path:"Projects"/Archive`), invalid completed tag patterns (including `tag:^x`), unsupported completed enum values, invalid sizes, numbers and dates (`size:>abc`), and over-complex input yield an error and no results. Unknown fields yield hints instead of errors.
+- Diagnostics are delayed until one second without typing, so incomplete input does not raise an error mid-keystroke. After the pause an incomplete query (for example an unterminated quote or a missing operand) shows **Incomplete query**, and an invalid one shows **Invalid query**. A grey one-line hint under the search field explains anything that is searched differently than typed or cannot match: an unknown field, `title: AI`, an empty value such as `title:` or `property:status=`, and empty quotes.
 - The parser limits a query to 512 tokens and 64 levels of parenthesis nesting.
 
 ## 🍌 Features beyond the query language
@@ -332,6 +373,10 @@ The literal-only visibility control hides only `Literal` results that have no se
 ### Configurable field aliases
 
 Custom field aliases can shorten frequently used predicates — for example, mapping `pt` to `property` and then querying `pt:status=active`. Aliases are resolved by the parser rather than by rewriting note text; literal text is left alone. Built-in field names cannot be overridden, targets must be canonical fields, and alias chaining is intentionally one hop.
+
+### Literal text prefixes
+
+A word before a colon that is not a field name is searched as plain text, with a hint. **Settings → Literal text prefixes** lists the patterns that are exempt from the hint. In a pattern, `*` stands for letters, digits, `+`, `.` and `-`, and `?` stands for one letter. The defaults are `*://` (URL schemes) and `?:\` and `?:/` (Windows drives). Remove a line and that kind of word gets the hint too.
 
 ### Indexing and inherited document search
 

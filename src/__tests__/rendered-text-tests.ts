@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { buildRenderedText, buildSourceMappedText, matchStructuredText, normalizeMappedText } from '../search/rendered-text'
-import { normalizeQueryValue } from '../search/query-language'
+import { normalizeQueryValue, parseQueryLanguage, type QueryNode } from '../search/query-language'
 
 describe('rendered Markdown matching and source offsets', () => {
   const normalizeCharacter = (value: string) => value.normalize('NFKC').toLocaleLowerCase()
@@ -16,6 +16,39 @@ describe('rendered Markdown matching and source offsets', () => {
     const index = renderedNormalized.text.indexOf('%%%')
     expect(raw.slice(renderedNormalized.sourceOffsets[index], renderedNormalized.sourceEnds[index + 2])).toBe(String.raw`\%\%\%`)
     expect(rawNormalized.text).not.toContain('%%%')
+  })
+
+  it('omits frontmatter from the rendered view for LF and CRLF line endings alike', () => {
+    expect(buildRenderedText('---\nstatus: active\n---\nBody text').text).toBe('Body text')
+    expect(buildRenderedText('---\r\nstatus: active\r\n---\r\nBody text').text).toBe('Body text')
+  })
+
+  it('applies quoted, exact, prefix and wildcard values consistently', () => {
+    const titles = ['AI LLM', 'AI LLMs', 'definitions of AI LLM', 'AI and LLM']
+    const matching = (query: string) => {
+      const node = parseQueryLanguage(query).root as Extract<QueryNode, { kind: 'field' }>
+      return titles.filter(title => matchStructuredText(title, node.value, node.matchMode ?? 'substring', node.globPattern))
+    }
+    expect(matching('title:"AI LLM"')).toEqual(['AI LLM', 'AI LLMs', 'definitions of AI LLM'])
+    expect(matching('title:=AI LLM')).toEqual(['AI LLM'])
+    expect(matching('title:=AI LLM*')).toEqual(['AI LLM', 'AI LLMs'])
+    expect(matching('title:=AI *LLM')).toEqual(['AI LLM', 'AI and LLM'])
+    expect(matching('title:^AI LLM')).toEqual(['AI LLM', 'AI LLMs'])
+    expect(matching('title:^AI*LLM')).toEqual(['AI LLM', 'AI LLMs', 'AI and LLM'])
+    expect(matching('title:~AI*LLM')).toEqual(titles)
+    expect(matching('title:AI*LLM')).toEqual(['AI LLM', 'AI and LLM'])
+    // Quoting or escaping keeps a wildcard character literal.
+    expect(matching('title:="AI *LLM"')).toEqual([])
+    expect(matching('title:"AI *LLM"')).toEqual([])
+    expect(matching('title:=AI\\*LLM')).toEqual([])
+  })
+
+  it('removes HTML tags with attributes only for known elements', () => {
+    expect(buildRenderedText('foo <span class="x">bar</span> baz').text).toBe('foo bar baz')
+    expect(buildRenderedText('<img src="a.png"> caption').text).toBe(' caption')
+    expect(buildRenderedText('line<br />next').text).toBe('linenext')
+    expect(buildRenderedText('x<y and z>w').text).toBe('x<y and z>w')
+    expect(buildRenderedText('see <https://e.test> now').text).toBe('see <https://e.test> now')
   })
 
   it('does not strip asterisks that are ordinary punctuation', () => {

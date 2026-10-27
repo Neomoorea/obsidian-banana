@@ -94,6 +94,7 @@ export function getApi(plugin: BananaPlugin) {
         ignoreDiacritics: plugin.settings.ignoreDiacritics,
         ignoreArabicDiacritics: plugin.settings.ignoreArabicDiacritics,
         fieldAliases: plugin.settings.queryFieldAliases,
+        literalPrefixes: plugin.settings.queryLiteralPrefixes,
       })
       const raw = await plugin.searchEngine.getSuggestions(query)
       return mapResults(plugin, raw)

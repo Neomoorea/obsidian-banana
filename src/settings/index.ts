@@ -11,6 +11,7 @@ import { injectSettingsIndexing } from './settings-indexing'
 import { injectSettingsUserInterface } from './settings-ui'
 import { injectSettingsWeighting } from './settings-weighting'
 import { type BananaSettings, saveSettings } from './utils'
+import { DEFAULT_LITERAL_PREFIXES } from '../search/query-language'
 import { migrateQueryPrefillPreference } from './query-prefill-migration'
 
 /**
@@ -132,6 +133,7 @@ export function getDefaultSettings(app: App): BananaSettings {
 
     welcomeMessage: '',
     queryFieldAliases: {},
+    queryLiteralPrefixes: [...DEFAULT_LITERAL_PREFIXES],
     queryModalPosition: null,
     queryModalSize: null,
     queryModalGeometryVersion: 0,

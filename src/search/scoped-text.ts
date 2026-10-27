@@ -1,5 +1,6 @@
 import { buildRenderedText, buildSourceMappedText, matchStructuredText, normalizeMappedText } from './rendered-text'
 import type { TextMatchMode } from './query-language'
+import { hasUnescapedWildcard } from './glob'
 
 export type ScopeKind = 'block' | 'section'
 
@@ -62,6 +63,8 @@ export function getScopeRanges(content: string, kind: ScopeKind): ScopeRange[] {
   if (kind === 'block') {
     const ranges: ScopeRange[] = []
     const separator = /\r?\n[ \t]*\r?\n+/gu
+    // Scan from the body: a blank line inside the frontmatter must not reset `start` back into it.
+    separator.lastIndex = bodyStart
     let start = bodyStart
     let match: RegExpExecArray | null
     while ((match = separator.exec(content)) !== null) {
@@ -113,7 +116,7 @@ export function findScopedTextMatches(
   kind: ScopeKind,
   mode: TextMatchMode,
   normalizeCharacter: (value: string) => string,
-  rawQueryPattern = query,
+  globPattern?: string,
 ): ScopedTextMatch[] {
   const pattern = normalizeMappedText(buildSourceMappedText(query), normalizeCharacter).text
   if (!pattern) return []
@@ -121,11 +124,13 @@ export function findScopedTextMatches(
   for (const range of getScopeRanges(content, kind)) {
     const rawScope = content.slice(range.start, range.end)
     const rendered = normalizeMappedText(buildRenderedText(rawScope), normalizeCharacter)
-    if (!matchStructuredText(rendered.text, pattern, mode, rawQueryPattern)) continue
+    if (!matchStructuredText(rendered.text, pattern, mode, globPattern)) continue
 
-    let startIndex = mode === 'substring' ? rendered.text.indexOf(pattern) : 0
+    // A wildcard pattern has no literal text to locate, so it highlights the whole scope.
+    const wildcard = mode === 'glob' || (globPattern !== undefined && hasUnescapedWildcard(globPattern))
+    let startIndex = mode === 'substring' && !wildcard ? rendered.text.indexOf(pattern) : 0
     if (startIndex < 0) continue
-    let endIndex = mode === 'exact' || mode === 'glob'
+    let endIndex = mode === 'exact' || wildcard
       ? rendered.text.length - 1
       : Math.min(rendered.text.length - 1, startIndex + Math.max(pattern.length, 1) - 1)
     let sourceMatch: ScopedTextMatch['sourceMatch'] = null

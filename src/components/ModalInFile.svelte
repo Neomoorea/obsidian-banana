@@ -57,6 +57,7 @@
         ignoreDiacritics: plugin.settings.ignoreDiacritics,
         ignoreArabicDiacritics: plugin.settings.ignoreArabicDiacritics,
         fieldAliases: plugin.settings.queryFieldAliases,
+        literalPrefixes: plugin.settings.queryLiteralPrefixes,
       })
       note =
         (

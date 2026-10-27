@@ -49,7 +49,7 @@
   let hideLiteralOnly = $state(false)
   let diagnosticsVisible = $state(false)
   let queryRequestId = 0
-  let query: Query = $state(new Query('', { ignoreDiacritics: false, ignoreArabicDiacritics: false, fieldAliases: untrack(() => plugin.settings.queryFieldAliases) }))
+  let query: Query = $state(new Query('', { ignoreDiacritics: false, ignoreArabicDiacritics: false, fieldAliases: untrack(() => plugin.settings.queryFieldAliases), literalPrefixes: untrack(() => plugin.settings.queryLiteralPrefixes) }))
   let indexingStepDesc = $state('')
   let searching = $state(true)
   let refInput: InputSearch | undefined
@@ -67,7 +67,10 @@
   }
   const literalOnlyCount = $derived(new Set(allResultNotes.filter(isLiteralOnly).map(note => note.path)).size)
   const hasQueryErrors = $derived(query.language.diagnostics.some(diagnostic => diagnostic.severity === 'error'))
-  const queryDiagnosticState = $derived(query.language.diagnostics.length === 0 ? null : query.language.diagnostics.every(diagnostic => /missing (?:value|tag pattern|comparison value)|unterminated|requires (?:a right operand|an expression)|expected a query expression|expected property:/iu.test(diagnostic.message)) ? 'incomplete' : 'invalid')
+  const queryErrors = $derived(query.language.diagnostics.filter(diagnostic => diagnostic.severity === 'error'))
+  // A warning is only a hint about how the text is searched; it never makes the query invalid.
+  const queryHint = $derived(queryErrors.length ? null : query.language.diagnostics.find(diagnostic => diagnostic.severity === 'warning')?.message ?? null)
+  const queryDiagnosticState = $derived(queryErrors.length === 0 ? null : queryErrors.every(diagnostic => /missing (?:value|tag pattern|comparison value)|unterminated|requires (?:a right operand|an expression)|expected a query expression|expected property:/iu.test(diagnostic.message)) ? 'incomplete' : 'invalid')
   const quietlyIncomplete = $derived(isQuietlyIncomplete(query.language.root))
 
   function isQuietlyIncomplete(node: QueryNode | null): boolean {
@@ -100,6 +103,7 @@
         ignoreDiacritics: plugin.settings.ignoreDiacritics,
         ignoreArabicDiacritics: plugin.settings.ignoreArabicDiacritics,
         fieldAliases: plugin.settings.queryFieldAliases,
+        literalPrefixes: plugin.settings.queryLiteralPrefixes,
       })
       searching = false
       resultNotes = []
@@ -219,6 +223,7 @@
       ignoreDiacritics: plugin.settings.ignoreDiacritics,
       ignoreArabicDiacritics: plugin.settings.ignoreArabicDiacritics,
       fieldAliases: plugin.settings.queryFieldAliases,
+      literalPrefixes: plugin.settings.queryLiteralPrefixes,
     })
     const currentRequest = cancelable(
       new Promise<ResultNote[]>(resolve => {
@@ -491,13 +496,16 @@
   </div>
 </div>
 
-{#if diagnosticsVisible && query.language.isAdvanced && queryDiagnosticState === 'invalid'}
+{#if diagnosticsVisible && query.language.isAdvanced && queryDiagnosticState}
   <div class="banana-query-diagnostics banana-query-diagnostics--invalid" role="status" aria-live="polite">
-    <div class="banana-query-diagnostics__title">Invalid query</div>
-    {#each query.language.diagnostics.slice(0, 1) as diagnostic}
+    <div class="banana-query-diagnostics__title">{queryDiagnosticState === 'incomplete' ? 'Incomplete query' : 'Invalid query'}</div>
+    {#each queryErrors.slice(0, 1) as diagnostic}
       <div>{diagnostic.message} <span>(character {diagnostic.start + 1})</span></div>
     {/each}
   </div>
+{/if}
+{#if diagnosticsVisible && queryHint}
+  <div class="banana-query-hint" title={queryHint} role="status" aria-live="polite">{queryHint}</div>
 {/if}
 {#if indexingStepDesc}
   <div style="text-align: center; color: var(--text-accent); margin-top: 10px">
